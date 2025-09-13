@@ -2,6 +2,11 @@
 # DRUPAL + RAILWAY GITIGNORE
 # =======================================
 
+# DDEV local
+.ddev/*
+!.ddev/config.yaml
+!.ddev/docker-compose.*.yaml
+
 # Ignorar dependencias generadas por Composer
 /vendor/
 
