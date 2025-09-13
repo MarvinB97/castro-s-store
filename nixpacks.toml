@@ -1,7 +1,7 @@
 [phases.setup]
 nixPkgs = [
   "php82",
-  "php82Packages.composer",   # 👈 agrega composer aquí
+  "php82Packages.composer",   
   "php82Extensions.pdo_mysql",
   "php82Extensions.mbstring",
   "php82Extensions.gd",
@@ -13,8 +13,20 @@ nixPkgs = [
 
 [phases.build]
 cmds = [
+  # Crear los directorios necesarios para CSS/JS/PHP
+  "mkdir -p web/sites/default/files/css web/sites/default/files/js web/sites/default/files/php",
+  
+  # Dar permisos
+  "chmod -R 777 web/sites/default/files",
+  
+  # Instalar dependencias
   "composer install --no-dev --optimize-autoloader",
-  "chmod -R 777 web/sites/default/files"
+  
+  # Reconstruir caché y generar agregados
+  "drush cr",
+  
+  # Importar configuración si es necesario
+  "drush cim -y"
 ]
 
 [start]
