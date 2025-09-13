@@ -4,8 +4,8 @@
 
 # DDEV local
 .ddev/*
-!.ddev/config.yaml
-!.ddev/docker-compose.*.yaml
+#!.ddev/config.yaml
+#!.ddev/docker-compose.*.yaml
 
 # Ignorar dependencias generadas por Composer
 /vendor/
