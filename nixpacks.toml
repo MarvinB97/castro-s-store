@@ -23,10 +23,10 @@ cmds = [
   "composer install --no-dev --optimize-autoloader",
   
   # Reconstruir caché y generar agregados
-  "drush cr",
+  "./vendor/bin/drush cr",
   
   # Importar configuración si es necesario
-  "drush cim -y"
+  "./vendor/bin/drush cim -y"
 ]
 
 [start]
