@@ -1,0 +1,31 @@
+# =======================================
+# DRUPAL + RAILWAY GITIGNORE
+# =======================================
+
+# Ignorar dependencias generadas por Composer
+/vendor/
+
+# Ignorar archivos de configuración local (solo usa settings.php en Railway si es genérico)
+sites/*/settings.local.php
+sites/*/services.local.yml
+
+# Ignorar archivos cargados por usuarios (no se deben versionar)
+sites/*/files/
+
+# Ignorar archivos temporales y cachés
+sites/*/files-php/
+sites/*/files/css/
+sites/*/files/js/
+core/assets
+core/.idea
+core/.vscode
+/.idea
+/.vscode
+
+# Ignorar backups y dumps de base de datos
+*.sql
+*.sqlite
+
+# Ignorar archivos de entorno locales
+.env
+.env.*
