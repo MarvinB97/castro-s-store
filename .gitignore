@@ -10,6 +10,10 @@
 # Ignorar dependencias generadas por Composer
 /vendor/
 
+#tests
+/web/core/tests/
+
+
 # Ignorar archivos de configuración local (solo usa settings.php en Railway si es genérico)
 sites/*/settings.local.php
 sites/*/services.local.yml
