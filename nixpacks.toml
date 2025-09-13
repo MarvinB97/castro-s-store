@@ -1,0 +1,20 @@
+[phases.setup]
+nixPkgs = [
+  "php81",
+  "php81Packages.composer",   # 👈 agrega composer aquí
+  "php81Extensions.pdo_mysql",
+  "php81Extensions.mbstring",
+  "php81Extensions.gd",
+  "php81Extensions.dom",
+  "php81Extensions.session",
+  "php81Extensions.simplexml",
+  "php81Extensions.filter"
+]
+
+[phases.build]
+cmds = [
+  "composer install --no-dev --optimize-autoloader"
+]
+
+[start]
+cmd = "php -S 0.0.0.0:$PORT -t web"
