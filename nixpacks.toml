@@ -13,7 +13,8 @@ nixPkgs = [
 
 [phases.build]
 cmds = [
-  "composer install --no-dev --optimize-autoloader"
+  "composer install --no-dev --optimize-autoloader",
+  "chmod -R 777 web/sites/default/files"
 ]
 
 [start]
