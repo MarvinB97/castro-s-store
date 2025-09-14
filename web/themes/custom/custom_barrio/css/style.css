@@ -1,0 +1,8 @@
+/**
+ * @file
+ * Subtheme specific CSS.
+ */
+
+ span.field.field--name-title.field--type-string.field--label-hidden{
+    color: red;
+ }
