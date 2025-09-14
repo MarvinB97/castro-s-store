@@ -13,6 +13,10 @@
 #tests
 /web/core/tests/
 
+# Archivos de temas contribuidos (si instalas Bootstrap Barrio)
+/web/themes/contrib/
+/web/modules/contrib/
+
 
 # Ignorar archivos de configuración local (solo usa settings.php en Railway si es genérico)
 /web/sites/*/settings.local.php
