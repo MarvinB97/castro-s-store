@@ -1,0 +1,210 @@
+name: Drupal CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  COMPOSER_PROCESS_TIMEOUT: 0
+  COMPOSER_NO_INTERACTION: 1
+
+jobs:
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/develop'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, curl, gd, mysql, intl, zip, exif
+        coverage: none
+
+    - name: Cache Composer packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.composer/cache
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-interaction
+
+    - name: Install CodeSniffer standards
+      run: |
+        composer require --dev drupal/coder
+        vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
+
+    - name: Validate composer.json
+      run: composer validate --strict
+
+    - name: Check PHP syntax
+      run: |
+        find web/modules/custom web/themes/custom -name "*.php" -exec php -l {} \;
+
+    - name: Run PHPCS on custom code (if exists)
+      run: |
+        if [ -d "web/modules/custom" ]; then
+          vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test web/modules/custom/ || echo "PHPCS completed with issues"
+        fi
+        if [ -d "web/themes/custom" ]; then
+          vendor/bin/phpcs --standard=Drupal --extensions=php,theme web/themes/custom/ || echo "PHPCS completed with issues"
+        fi
+
+    - name: Run PHPStan (if custom code exists)
+      run: |
+        if [ -d "web/modules/custom" ] || [ -d "web/themes/custom" ]; then
+          composer require --dev phpstan/phpstan
+          vendor/bin/phpstan analyse --memory-limit=1G web/modules/custom/ web/themes/custom/ --level=1 || echo "PHPStan completed with issues"
+        fi
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-interaction
+
+    - name: Security check with Symfony
+      uses: symfonycorp/security-checker-action@v4
+
+    - name: Check for known vulnerabilities
+      run: |
+        composer require --dev enlightn/security-checker
+        vendor/bin/security-checker security:check
+
+    - name: Check for exposed sensitive files
+      run: |
+        # Verificar que no hay archivos sensibles expuestos
+        sensitive_files=(".env" "settings.local.php" "services.local.yml" "*.sql")
+        for file in "${sensitive_files[@]}"; do
+          if find . -name "$file" | grep -q .; then
+            echo "WARNING: Found sensitive file: $(find . -name "$file")"
+          fi
+        done
+
+  build-assets:
+    name: Build Assets
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Check for frontend dependencies
+      run: |
+        if [ -f "package.json" ]; then
+          npm ci
+          npm run build
+        else
+          echo "No package.json found, skipping frontend build"
+        fi
+
+  database-update:
+    name: Database Update (Staging)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    environment: staging
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, curl, gd, mysql, intl, zip
+
+    - name: Install dependencies (no-dev for staging)
+      run: composer install --prefer-dist --no-dev --optimize-autoloader --no-progress --no-interaction
+
+    - name: Setup SSH for remote deployment
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.STAGING_SSH_KEY }}
+
+    - name: Run database updates on staging
+      run: |
+        ssh ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} \
+          "cd ${{ secrets.STAGING_PATH }} && \
+          php -d memory_limit=256M /usr/local/bin/composer install --no-dev --optimize-autoloader && \
+          php -d memory_limit=256M vendor/bin/drush updb -y && \
+          php -d memory_limit=256M vendor/bin/drush cr"
+
+  production-deploy:
+    name: Production Deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    needs: [code-quality, security-scan]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Install dependencies (production)
+      run: composer install --prefer-dist --no-dev --optimize-autoloader --no-progress --no-interaction
+
+    - name: Setup SSH for production
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
+
+    - name: Deploy to production via RSYNC
+      run: |
+        rsync -avz --delete \
+          --exclude='.git' \
+          --exclude='.github' \
+          --exclude='.env' \
+          --exclude='web/sites/*/files' \
+          --exclude='web/sites/*/settings.local.php' \
+          --exclude='vendor/' \
+          --exclude='node_modules/' \
+          ./ ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }}:${{ secrets.PRODUCTION_PATH }}/
+
+    - name: Run production updates
+      run: |
+        ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} \
+          "cd ${{ secrets.PRODUCTION_PATH }} && \
+          php -d memory_limit=256M vendor/bin/drush updb -y && \
+          php -d memory_limit=256M vendor/bin/drush cim -y && \
+          php -d memory_limit=256M vendor/bin/drush cr"
+
+    - name: Notify deployment success
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
