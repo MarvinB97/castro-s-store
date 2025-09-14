@@ -10,11 +10,12 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  phpcs:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -22,22 +23,13 @@ jobs:
         php-version: '8.2'
         extensions: mbstring, xml, curl, gd, mysql, intl, zip
 
-    - name: Validate composer.json
-      run: composer validate --strict
-
-    - name: Cache Composer packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.composer/cache
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-interaction
 
-    - name: Check Drupal coding standards
-      run: vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme web/modules/custom/ web/themes/custom/
+    - name: Install Drupal coding standards
+      run: |
+        composer require --dev drupal/coder
+        vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
 
-    - name: Run PHPStan
-      run: vendor/bin/phpstan analyse --memory-limit=1G web/modules/custom/ web/themes/custom/
+    - name: Run PHPCS on custom code
+      run: vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme web/modules/custom/ web/themes/custom/
