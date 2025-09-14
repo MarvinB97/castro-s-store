@@ -15,19 +15,19 @@
 
 
 # Ignorar archivos de configuración local (solo usa settings.php en Railway si es genérico)
-sites/*/settings.local.php
-sites/*/services.local.yml
+/web/sites/*/settings.local.php
+/web/sites/*/services.local.yml
 
 # Ignorar archivos cargados por usuarios (no se deben versionar)
-sites/*/files/
+/web/sites/*/files/
 
 # Ignorar archivos temporales y cachés
-sites/*/files-php/
-sites/*/files/css/
-sites/*/files/js/
-core/assets
-core/.idea
-core/.vscode
+/web/sites/*/files-php/
+/web/sites/*/files/css/
+/web/sites/*/files/js/
+/web/core/assets
+/web/core/.idea
+/web/core/.vscode
 /.idea
 /.vscode
 
