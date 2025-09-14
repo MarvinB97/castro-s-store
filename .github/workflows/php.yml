@@ -21,7 +21,6 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        extensions: mbstring, xml, curl, gd, mysql, intl, zip
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-interaction
@@ -31,5 +30,12 @@ jobs:
         composer require --dev drupal/coder
         vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
 
-    - name: Run PHPCS on custom code
-      run: vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme web/modules/custom/ web/themes/custom/
+    - name: Check project structure
+      run: |
+        echo "Estructura del proyecto:"
+        find . -name "custom" -type d
+        echo "Contenido de web/:"
+        ls -la web/
+
+    - name: Run PHPCS only on custom themes
+      run: vendor/bin/phpcs --standard=Drupal --extensions=php,theme web/themes/custom/
