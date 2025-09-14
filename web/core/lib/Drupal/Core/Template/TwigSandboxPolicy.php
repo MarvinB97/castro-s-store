@@ -22,7 +22,6 @@ class TwigSandboxPolicy implements SecurityPolicyInterface {
    *
    * @var array
    */
-  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName
   protected $allowed_methods;
 
   /**
@@ -32,7 +31,6 @@ class TwigSandboxPolicy implements SecurityPolicyInterface {
    *
    * @var array
    */
-  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName
   protected $allowed_prefixes;
 
   /**
@@ -40,7 +38,6 @@ class TwigSandboxPolicy implements SecurityPolicyInterface {
    *
    * @var array
    */
-  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName
   protected $allowed_classes;
 
   /**
@@ -57,7 +54,15 @@ class TwigSandboxPolicy implements SecurityPolicyInterface {
     // Flip the array so we can check using isset().
     $this->allowed_classes = array_flip($allowed_classes);
 
-    $allowed_methods = static::getMethodsAllowedOnAllObjects();
+    $allowed_methods = Settings::get('twig_sandbox_allowed_methods', [
+      // Only allow idempotent methods.
+      'id',
+      'label',
+      'bundle',
+      'get',
+      '__toString',
+      'toString',
+    ]);
     // Flip the array so we can check using isset().
     $this->allowed_methods = array_flip($allowed_methods);
 
@@ -96,30 +101,12 @@ class TwigSandboxPolicy implements SecurityPolicyInterface {
     // If the method name starts with an allowed prefix, allow it. Note:
     // strpos() is between 3x and 7x faster than preg_match() in this case.
     foreach ($this->allowed_prefixes as $prefix) {
-      if (str_starts_with($method, $prefix)) {
+      if (strpos($method, $prefix) === 0) {
         return;
       }
     }
 
     throw new SecurityError(sprintf('Calling "%s" method on a "%s" object is not allowed.', $method, get_class($obj)));
-  }
-
-  /**
-   * Gets the list of allowed methods on all objects.
-   *
-   * @return string[]
-   *   The list of allowed methods on all objects.
-   */
-  public static function getMethodsAllowedOnAllObjects(): array {
-    return Settings::get('twig_sandbox_allowed_methods', [
-      // Only allow idempotent methods.
-      'id',
-      'label',
-      'bundle',
-      'get',
-      '__toString',
-      'toString',
-    ]);
   }
 
 }

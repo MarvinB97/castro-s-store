@@ -2,11 +2,9 @@
 
 namespace Drupal\media\Entity;
 
-use Drupal\Core\Config\Action\Attribute\ActionMethod;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\media\MediaTypeInterface;
 
 /**
@@ -61,10 +59,6 @@ use Drupal\media\MediaTypeInterface;
  *     "entity-permissions-form" = "/admin/structure/media/manage/{media_type}/permissions",
  *     "collection" = "/admin/structure/media",
  *   },
- *   constraints = {
- *     "ImmutableProperties" = {"id", "source"},
- *     "MediaMappingsConstraint" = { },
- *   }
  * )
  */
 class MediaType extends ConfigEntityBundleBase implements MediaTypeInterface, EntityWithPluginCollectionInterface {
@@ -170,7 +164,6 @@ class MediaType extends ConfigEntityBundleBase implements MediaTypeInterface, En
   /**
    * {@inheritdoc}
    */
-  #[ActionMethod(adminLabel: new TranslatableMarkup('Set description'), pluralize: FALSE)]
   public function setDescription($description) {
     return $this->set('description', $description);
   }
@@ -240,7 +233,6 @@ class MediaType extends ConfigEntityBundleBase implements MediaTypeInterface, En
   /**
    * {@inheritdoc}
    */
-  #[ActionMethod(adminLabel: new TranslatableMarkup('Set field mapping'), pluralize: FALSE)]
   public function setFieldMap(array $map) {
     return $this->set('field_map', $map);
   }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\jsonapi\Functional;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -121,7 +119,7 @@ class FieldConfigTest extends ConfigEntityResourceTestBase {
           'label' => 'field_llama',
           'langcode' => 'en',
           'required' => FALSE,
-          'settings' => ['allowed_formats' => []],
+          'settings' => [],
           'status' => TRUE,
           'translatable' => TRUE,
           'drupal_internal__id' => 'node.camelids.field_llama',
@@ -141,7 +139,7 @@ class FieldConfigTest extends ConfigEntityResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function getExpectedUnauthorizedAccessMessage($method): string {
+  protected function getExpectedUnauthorizedAccessMessage($method) {
     return "The 'administer node fields' permission is required.";
   }
 

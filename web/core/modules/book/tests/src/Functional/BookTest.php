@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\book\Functional;
 
 use Drupal\Core\Cache\Cache;
@@ -12,8 +10,6 @@ use Drupal\user\RoleInterface;
  * Create a book, add pages, and test book interface.
  *
  * @group book
- * @group legacy
- * @group #slow
  */
 class BookTest extends BrowserTestBase {
 
@@ -105,7 +101,7 @@ class BookTest extends BrowserTestBase {
    *
    * @see \Drupal\book\Cache\BookNavigationCacheContext
    */
-  public function testBookNavigationCacheContext(): void {
+  public function testBookNavigationCacheContext() {
     // Create a page node.
     $this->drupalCreateContentType(['type' => 'page']);
     $page = $this->drupalCreateNode();
@@ -143,7 +139,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests saving the book outline on an empty book.
    */
-  public function testEmptyBook(): void {
+  public function testEmptyBook() {
     // Create a new empty book.
     $this->drupalLogin($this->bookAuthor);
     $book = $this->createBookNode('new');
@@ -159,7 +155,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests book functionality through node interfaces.
    */
-  public function testBook(): void {
+  public function testBook() {
     // Create new book.
     $nodes = $this->createBook();
     $book = $this->book;
@@ -235,7 +231,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests book export ("printer-friendly version") functionality.
    */
-  public function testBookExport(): void {
+  public function testBookExport() {
     // Create a book.
     $nodes = $this->createBook();
 
@@ -280,7 +276,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests the functionality of the book navigation block.
    */
-  public function testBookNavigationBlock(): void {
+  public function testBookNavigationBlock() {
     $this->drupalLogin($this->adminUser);
 
     // Enable the block.
@@ -332,7 +328,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests BookManager::getTableOfContents().
    */
-  public function testGetTableOfContents(): void {
+  public function testGetTableOfContents() {
     // Create new book.
     $nodes = $this->createBook();
     $book = $this->book;
@@ -384,7 +380,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests the book navigation block when an access module is installed.
    */
-  public function testNavigationBlockOnAccessModuleInstalled(): void {
+  public function testNavigationBlockOnAccessModuleInstalled() {
     $this->drupalLogin($this->adminUser);
     $block = $this->drupalPlaceBlock('book_navigation', ['block_mode' => 'book pages']);
 
@@ -416,7 +412,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests the access for deleting top-level book nodes.
    */
-  public function testBookDelete(): void {
+  public function testBookDelete() {
     $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
     $nodes = $this->createBook();
     $this->drupalLogin($this->adminUser);
@@ -470,7 +466,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests outline of a book.
    */
-  public function testBookOutline(): void {
+  public function testBookOutline() {
     $this->drupalLogin($this->bookAuthor);
 
     // Create new node not yet a book.
@@ -530,7 +526,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests that saveBookLink() returns something.
    */
-  public function testSaveBookLink(): void {
+  public function testSaveBookLink() {
     $book_manager = \Drupal::service('book.manager');
 
     // Mock a link for a new book.
@@ -550,7 +546,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests the listing of all books.
    */
-  public function testBookListing(): void {
+  public function testBookListing() {
     // Uninstall 'node_access_test' as this interferes with the test.
     \Drupal::service('module_installer')->uninstall(['node_access_test']);
 
@@ -603,7 +599,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests the administrative listing of all books.
    */
-  public function testAdminBookListing(): void {
+  public function testAdminBookListing() {
     // Create a new book.
     $nodes = $this->createBook();
 
@@ -616,7 +612,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests the administrative listing of all book pages in a book.
    */
-  public function testAdminBookNodeListing(): void {
+  public function testAdminBookNodeListing() {
     // Create a new book.
     $nodes = $this->createBook();
     $this->drupalLogin($this->adminUser);
@@ -642,7 +638,7 @@ class BookTest extends BrowserTestBase {
 
     // Saving a book page not as the current version shouldn't effect the book.
     $old_title = $nodes[1]->getTitle();
-    $new_title = $this->getRandomGenerator()->name();
+    $new_title = $this->randomGenerator->name();
     $nodes[1]->isDefaultRevision(FALSE);
     $nodes[1]->setNewRevision(TRUE);
     $nodes[1]->setTitle($new_title);
@@ -656,7 +652,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Ensure the loaded book in hook_node_load() does not depend on the user.
    */
-  public function testHookNodeLoadAccess(): void {
+  public function testHookNodeLoadAccess() {
     \Drupal::service('module_installer')->install(['node_access_test']);
 
     // Ensure that the loaded book in hook_node_load() does NOT depend on the
@@ -689,7 +685,7 @@ class BookTest extends BrowserTestBase {
    *
    * There was a fatal error with "Show block only on book pages" block mode.
    */
-  public function testBookNavigationBlockOnUnpublishedBook(): void {
+  public function testBookNavigationBlockOnUnpublishedBook() {
     // Create a new book.
     $this->createBook();
 
@@ -719,7 +715,7 @@ class BookTest extends BrowserTestBase {
   /**
    * Tests that the book settings form can be saved without error.
    */
-  public function testSettingsForm(): void {
+  public function testSettingsForm() {
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('admin/structure/book/settings');
     $this->submitForm([], 'Save configuration');

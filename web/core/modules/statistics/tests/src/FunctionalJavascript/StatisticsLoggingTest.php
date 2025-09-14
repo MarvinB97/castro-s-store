@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\statistics\FunctionalJavascript;
 
 use Drupal\Core\Session\AccountInterface;
@@ -12,8 +10,7 @@ use Drupal\user\Entity\Role;
 /**
  * Tests that statistics works.
  *
- * @group statistics
- * @group legacy
+ * @group system
  */
 class StatisticsLoggingTest extends WebDriverTestBase {
 
@@ -59,7 +56,7 @@ class StatisticsLoggingTest extends WebDriverTestBase {
   /**
    * Tests that statistics works with different addressing variants.
    */
-  public function testLoggingPage(): void {
+  public function testLoggingPage() {
     // At the first request, the page does not contain statistics counter.
     $this->assertNull($this->getStatisticsCounter('node/1'));
     $this->assertSame(1, $this->getStatisticsCounter('node/1'));

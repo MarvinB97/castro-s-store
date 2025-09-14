@@ -23,6 +23,11 @@ use Drupal\jsonapi\Normalizer\Value\CacheableOmission;
 class ResourceObjectNormalizer extends NormalizerBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $supportedInterfaceOrClass = ResourceObject::class;
+
+  /**
    * The entity normalization cacher.
    *
    * @var \Drupal\jsonapi\EventSubscriber\ResourceObjectNormalizationCacher
@@ -42,7 +47,7 @@ class ResourceObjectNormalizer extends NormalizerBase {
   /**
    * {@inheritdoc}
    */
-  public function supportsDenormalization($data, string $type, ?string $format = NULL, array $context = []): bool {
+  public function supportsDenormalization($data, string $type, string $format = NULL, array $context = []): bool {
     return FALSE;
   }
 
@@ -165,7 +170,7 @@ class ResourceObjectNormalizer extends NormalizerBase {
     // entities do not have "real" fields and therefore do not have field access
     // restrictions.
     if ($field instanceof FieldItemListInterface) {
-      $field_access_result = $field->access('view', $context['account'] ?? NULL, TRUE);
+      $field_access_result = $field->access('view', $context['account'], TRUE);
       if (!$field_access_result->isAllowed()) {
         return new CacheableOmission(CacheableMetadata::createFromObject($field_access_result));
       }
@@ -201,18 +206,7 @@ class ResourceObjectNormalizer extends NormalizerBase {
    * {@inheritdoc}
    */
   public function hasCacheableSupportsMethod(): bool {
-    @trigger_error(__METHOD__ . '() is deprecated in drupal:10.1.0 and is removed from drupal:11.0.0. Use getSupportedTypes() instead. See https://www.drupal.org/node/3359695', E_USER_DEPRECATED);
-
     return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSupportedTypes(?string $format): array {
-    return [
-      ResourceObject::class => TRUE,
-    ];
   }
 
 }

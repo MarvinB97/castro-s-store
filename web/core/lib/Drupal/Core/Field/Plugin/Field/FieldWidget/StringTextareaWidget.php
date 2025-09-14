@@ -2,20 +2,21 @@
 
 namespace Drupal\Core\Field\Plugin\Field\FieldWidget;
 
-use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Plugin implementation of the 'string_textarea' widget.
+ *
+ * @FieldWidget(
+ *   id = "string_textarea",
+ *   label = @Translation("Text area (multiple rows)"),
+ *   field_types = {
+ *     "string_long"
+ *   }
+ * )
  */
-#[FieldWidget(
-  id: 'string_textarea',
-  label: new TranslatableMarkup('Text area (multiple rows)'),
-  field_types: ['string_long'],
-)]
 class StringTextareaWidget extends WidgetBase {
 
   /**
@@ -40,7 +41,7 @@ class StringTextareaWidget extends WidgetBase {
       '#min' => 1,
     ];
     $element['placeholder'] = [
-      '#type' => 'textarea',
+      '#type' => 'textfield',
       '#title' => $this->t('Placeholder'),
       '#default_value' => $this->getSetting('placeholder'),
       '#description' => $this->t('Text that will be shown inside the field until a value is entered. This hint is usually a sample value or a brief description of the expected format.'),

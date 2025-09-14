@@ -1,10 +1,7 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\block_content\Unit\Menu;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\Core\Menu\LocalTaskIntegrationTestBase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -20,7 +17,7 @@ class BlockContentLocalTasksTest extends LocalTaskIntegrationTestBase {
    */
   protected function setUp(): void {
     $this->directoryList = [
-      'system' => 'core/modules/system',
+      'block' => 'core/modules/block',
       'block_content' => 'core/modules/block_content',
     ];
     parent::setUp();
@@ -50,16 +47,9 @@ class BlockContentLocalTasksTest extends LocalTaskIntegrationTestBase {
       ->method('listInfo')
       ->willReturn($themes);
 
-    // Add services required for block local tasks.
-    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $entity_type_manager->expects($this->any())
-      ->method('getDefinitions')
-      ->willReturn([]);
-
     $container = new ContainerBuilder();
     $container->set('config.factory', $config_factory);
     $container->set('theme_handler', $theme_handler);
-    $container->set('entity_type.manager', $entity_type_manager);
     \Drupal::setContainer($container);
   }
 
@@ -68,11 +58,15 @@ class BlockContentLocalTasksTest extends LocalTaskIntegrationTestBase {
    *
    * @dataProvider getBlockContentListingRoutes
    */
-  public function testBlockContentListLocalTasks($route): void {
+  public function testBlockContentListLocalTasks($route) {
     $this->assertLocalTasks($route, [
       0 => [
-        'system.admin_content',
+        'block.admin_display',
         'entity.block_content.collection',
+      ],
+      1 => [
+        'block_content.list_sub',
+        'entity.block_content_type.collection',
       ],
     ]);
   }
@@ -80,9 +74,9 @@ class BlockContentLocalTasksTest extends LocalTaskIntegrationTestBase {
   /**
    * Provides a list of routes to test.
    */
-  public static function getBlockContentListingRoutes() {
+  public function getBlockContentListingRoutes() {
     return [
-      ['entity.block_content.collection', 'system.admin_content'],
+      ['entity.block_content.collection', 'entity.block_content_type.collection'],
     ];
   }
 

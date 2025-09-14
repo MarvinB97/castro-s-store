@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\serialization\Unit\Normalizer;
 
 use Drupal\Core\TypedData\DataDefinition;
@@ -49,8 +47,6 @@ class ListNormalizerTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    parent::setUp();
-
     // Mock the TypedDataManager to return a TypedDataInterface mock.
     $this->typedData = $this->createMock('Drupal\Core\TypedData\TypedDataInterface');
     $typed_data_manager = $this->createMock(TypedDataManagerInterface::class);
@@ -79,7 +75,7 @@ class ListNormalizerTest extends UnitTestCase {
   /**
    * Tests the supportsNormalization() method.
    */
-  public function testSupportsNormalization(): void {
+  public function testSupportsNormalization() {
     $this->assertTrue($this->normalizer->supportsNormalization($this->list));
     $this->assertFalse($this->normalizer->supportsNormalization(new \stdClass()));
   }
@@ -87,7 +83,7 @@ class ListNormalizerTest extends UnitTestCase {
   /**
    * Tests the normalize() method.
    */
-  public function testNormalize(): void {
+  public function testNormalize() {
     $serializer = $this->prophesize(Serializer::class);
     $serializer->normalize($this->typedData, 'json', ['mu' => 'nu'])
       ->shouldBeCalledTimes(3)

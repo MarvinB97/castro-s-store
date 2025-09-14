@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\field_ui\Kernel;
 
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
@@ -18,16 +16,17 @@ use Drupal\KernelTests\KernelTestBase;
 class EntityFormDisplayTest extends KernelTestBase {
 
   /**
-   * {@inheritdoc}
+   * Modules to install.
+   *
+   * @var string[]
    */
   protected static $modules = [
     'field_ui',
     'field',
     'entity_test',
     'field_test',
-    'system',
-    'text',
     'user',
+    'text',
   ];
 
   /**
@@ -35,15 +34,13 @@ class EntityFormDisplayTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('action');
-    $this->installConfig('user');
     $this->installEntitySchema('entity_test');
   }
 
   /**
    * @covers \Drupal\Core\Entity\EntityDisplayRepository::getFormDisplay
    */
-  public function testEntityGetFromDisplay(): void {
+  public function testEntityGetFromDisplay() {
     /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
     $display_repository = \Drupal::service('entity_display.repository');
 
@@ -67,7 +64,7 @@ class EntityFormDisplayTest extends KernelTestBase {
   /**
    * Tests the behavior of a field component within an EntityFormDisplay object.
    */
-  public function testFieldComponent(): void {
+  public function testFieldComponent() {
     // Create a field storage and a field.
     $field_name = 'test_field';
     $field_storage = FieldStorageConfig::create([
@@ -132,7 +129,7 @@ class EntityFormDisplayTest extends KernelTestBase {
   /**
    * Tests the behavior of a field component for a base field.
    */
-  public function testBaseFieldComponent(): void {
+  public function testBaseFieldComponent() {
     $display = EntityFormDisplay::create([
       'targetEntityType' => 'entity_test_base_field_display',
       'bundle' => 'entity_test_base_field_display',
@@ -193,7 +190,7 @@ class EntityFormDisplayTest extends KernelTestBase {
   /**
    * Tests deleting field.
    */
-  public function testDeleteField(): void {
+  public function testDeleteField() {
     $field_name = 'test_field';
     // Create a field storage and a field.
     $field_storage = FieldStorageConfig::create([
@@ -209,11 +206,7 @@ class EntityFormDisplayTest extends KernelTestBase {
     $field->save();
 
     // Create default and compact entity display.
-    EntityFormMode::create([
-      'id' => 'entity_test.compact',
-      'label' => 'Compact',
-      'targetEntityType' => 'entity_test',
-    ])->save();
+    EntityFormMode::create(['id' => 'entity_test.compact', 'targetEntityType' => 'entity_test'])->save();
     EntityFormDisplay::create([
       'targetEntityType' => 'entity_test',
       'bundle' => 'entity_test',
@@ -247,7 +240,7 @@ class EntityFormDisplayTest extends KernelTestBase {
   /**
    * Tests \Drupal\Core\Entity\EntityDisplayBase::onDependencyRemoval().
    */
-  public function testOnDependencyRemoval(): void {
+  public function testOnDependencyRemoval() {
     $this->enableModules(['field_plugins_test']);
 
     $field_name = 'test_field';
@@ -287,25 +280,6 @@ class EntityFormDisplayTest extends KernelTestBase {
     \Drupal::service('config.manager')->uninstall('module', 'text');
     $display = $display_repository->getFormDisplay('entity_test', 'entity_test');
     $this->assertNull($display->getComponent($field_name));
-  }
-
-  /**
-   * Tests the serialization and unserialization of the class.
-   */
-  public function testSerialization(): void {
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-
-    $form_display = $display_repository->getFormDisplay('entity_test', 'entity_test');
-    // Make sure the langcode base field is visible in the original form
-    // display.
-    $this->assertNotEmpty($form_display->getComponent('langcode'));
-    // Remove the langcode.
-    $form_display->removeComponent('langcode');
-
-    $unserialized = unserialize(serialize($form_display));
-    // Verify that components are retained upon unserialization.
-    $this->assertEquals($form_display->getComponents(), $unserialized->getComponents());
   }
 
 }

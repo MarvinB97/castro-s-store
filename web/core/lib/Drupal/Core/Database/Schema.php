@@ -84,7 +84,7 @@ abstract class Schema implements PlaceholderInterface {
   protected function getPrefixInfo($table = 'default', $add_prefix = TRUE) {
     $info = [
       'schema' => $this->defaultSchema,
-      'prefix' => $this->connection->getPrefix(),
+      'prefix' => $this->connection->tablePrefix($table),
     ];
     if ($add_prefix) {
       $table = $info['prefix'] . $table;
@@ -161,14 +161,12 @@ abstract class Schema implements PlaceholderInterface {
    *
    * @param $table
    *   The name of the table in drupal (no prefixing).
-   * @param bool $add_prefix
-   *   Boolean to indicate whether the table name needs to be prefixed.
    *
    * @return bool
    *   TRUE if the given table exists, otherwise FALSE.
    */
-  public function tableExists($table, bool $add_prefix = TRUE) {
-    $condition = $this->buildTableNameCondition($table, '=', $add_prefix);
+  public function tableExists($table) {
+    $condition = $this->buildTableNameCondition($table);
     $condition->compile($this->connection, $this);
     // Normally, we would heartily discourage the use of string
     // concatenation for conditionals like this however, we
@@ -198,7 +196,7 @@ abstract class Schema implements PlaceholderInterface {
     $condition = $this->buildTableNameCondition('%', 'LIKE');
     $condition->compile($this->connection, $this);
 
-    $prefix = $this->connection->getPrefix();
+    $prefix = $this->connection->tablePrefix();
     $prefix_length = strlen($prefix);
     $tables = [];
     // Normally, we would heartily discourage the use of string
@@ -543,20 +541,20 @@ abstract class Schema implements PlaceholderInterface {
    *
    * For example, suppose you have:
    * @code
-   * $schema['foo'] = [
-   *   'fields' => [
-   *     'bar' => ['type' => 'int', 'not null' => TRUE]
-   *   ],
-   *   'primary key' => ['bar']
-   * ];
+   * $schema['foo'] = array(
+   *   'fields' => array(
+   *     'bar' => array('type' => 'int', 'not null' => TRUE)
+   *   ),
+   *   'primary key' => array('bar')
+   * );
    * @endcode
    * and you want to change foo.bar to be type serial, leaving it as the
    * primary key. The correct sequence is:
    * @code
    * $injected_database->schema()->dropPrimaryKey('foo');
    * $injected_database->schema()->changeField('foo', 'bar', 'bar',
-   *   ['type' => 'serial', 'not null' => TRUE],
-   *   ['primary key' => ['bar'])];
+   *   array('type' => 'serial', 'not null' => TRUE),
+   *   array('primary key' => array('bar')));
    * @endcode
    *
    * The reasons for this are due to the different database engines:
@@ -689,7 +687,8 @@ abstract class Schema implements PlaceholderInterface {
   }
 
   /**
-   * Escapes a value to be used as the default value on a column.
+   * Return an escaped version of its parameter to be used as a default value
+   * on a column.
    *
    * @param mixed $value
    *   The value to be escaped (int, float, null or string).

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\jsonapi\Functional;
 
 use Drupal\Core\Cache\CacheableMetadata;
@@ -67,8 +65,6 @@ class RestJsonApiUnsupported extends ResourceTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->config('system.logging')->set('error_level', ERROR_REPORTING_HIDE)->save();
-
     // Create a "Camelids" node type.
     NodeType::create([
       'name' => 'Camelids',
@@ -88,7 +84,7 @@ class RestJsonApiUnsupported extends ResourceTestBase {
    *
    * @see \Drupal\jsonapi\EventSubscriber\JsonApiRequestValidator::validateQueryParams()
    */
-  public function testApiJsonNotSupportedInRest(): void {
+  public function testApiJsonNotSupportedInRest() {
     $this->assertSame(['json', 'xml'], $this->container->getParameter('serializer.formats'));
 
     $this->provisionResource(['api_json'], []);
@@ -103,8 +99,8 @@ class RestJsonApiUnsupported extends ResourceTestBase {
       400,
       FALSE,
       $response,
-      ['4xx-response', 'config:system.logging', 'config:user.role.anonymous', 'http_response', 'node:1'],
-      ['url.query_args', 'url.site', 'user.permissions'],
+      ['4xx-response', 'config:user.role.anonymous', 'http_response', 'node:1'],
+      ['url.query_args:_format', 'url.site', 'user.permissions'],
       'MISS',
       'MISS'
     );
@@ -118,7 +114,7 @@ class RestJsonApiUnsupported extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function getExpectedUnauthorizedAccessMessage($method): string {
+  protected function getExpectedUnauthorizedAccessMessage($method) {
     return '';
   }
 

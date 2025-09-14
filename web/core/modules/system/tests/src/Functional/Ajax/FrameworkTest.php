@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\system\Functional\Ajax;
 
 use Drupal\Component\Serialization\Json;
@@ -34,7 +32,7 @@ class FrameworkTest extends BrowserTestBase {
   /**
    * Verifies the Ajax rendering of a command in the settings.
    */
-  public function testAJAXRender(): void {
+  public function testAJAXRender() {
     // Verify that settings command is generated if JavaScript settings exist.
     $commands = $this->drupalGetAjax('ajax-test/render');
     $expected = new SettingsCommand(['ajax' => 'test'], TRUE);
@@ -44,7 +42,7 @@ class FrameworkTest extends BrowserTestBase {
   /**
    * Tests AjaxResponse::prepare() AJAX commands ordering.
    */
-  public function testOrder(): void {
+  public function testOrder() {
     $expected_commands = [];
 
     // Expected commands, in a very specific order.
@@ -54,12 +52,12 @@ class FrameworkTest extends BrowserTestBase {
     $renderer = \Drupal::service('renderer');
     $build['#attached']['library'][] = 'ajax_test/order-css-command';
     $assets = AttachedAssets::createFromRenderArray($build);
-    $css_render_array = $css_collection_renderer->render($asset_resolver->getCssAssets($assets, FALSE, \Drupal::languageManager()->getCurrentLanguage()));
-    $expected_commands[1] = new AddCssCommand(array_column($css_render_array, '#attributes'));
+    $css_render_array = $css_collection_renderer->render($asset_resolver->getCssAssets($assets, FALSE));
+    $expected_commands[1] = new AddCssCommand($renderer->renderRoot($css_render_array));
     $build['#attached']['library'][] = 'ajax_test/order-header-js-command';
     $build['#attached']['library'][] = 'ajax_test/order-footer-js-command';
     $assets = AttachedAssets::createFromRenderArray($build);
-    [$js_assets_header, $js_assets_footer] = $asset_resolver->getJsAssets($assets, FALSE, \Drupal::languageManager()->getCurrentLanguage());
+    [$js_assets_header, $js_assets_footer] = $asset_resolver->getJsAssets($assets, FALSE);
     $js_header_render_array = $js_collection_renderer->render($js_assets_header);
     $js_footer_render_array = $js_collection_renderer->render($js_assets_footer);
     $expected_commands[2] = new AddJsCommand(array_column($js_header_render_array, '#attributes'), 'head');
@@ -81,7 +79,7 @@ class FrameworkTest extends BrowserTestBase {
   /**
    * Tests the behavior of an error alert command.
    */
-  public function testAJAXRenderError(): void {
+  public function testAJAXRenderError() {
     // Verify custom error message.
     $edit = [
       'message' => 'Custom error message.',
@@ -149,7 +147,7 @@ class FrameworkTest extends BrowserTestBase {
    *   Decoded JSON.
    */
   protected function drupalGetAjax($path, array $options = [], array $headers = []) {
-    $headers = ['X-Requested-With' => 'XMLHttpRequest'];
+    $headers[] = 'X-Requested-With: XMLHttpRequest';
     if (!isset($options['query'][MainContentViewSubscriber::WRAPPER_FORMAT])) {
       $options['query'][MainContentViewSubscriber::WRAPPER_FORMAT] = 'drupal_ajax';
     }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\jsonapi\Unit\Normalizer;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -37,8 +35,6 @@ class JsonApiDocumentTopLevelNormalizerTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    parent::setUp();
-
     $resource_type_repository = $this->prophesize(ResourceTypeRepository::class);
 
     $resource_type_repository
@@ -89,7 +85,7 @@ class JsonApiDocumentTopLevelNormalizerTest extends UnitTestCase {
    * @covers ::denormalize
    * @dataProvider denormalizeProvider
    */
-  public function testDenormalize($input, $expected): void {
+  public function testDenormalize($input, $expected) {
     $resource_type = new ResourceType('node', 'article', FieldableEntityInterface::class);
     $resource_type->setRelatableResourceTypes([]);
     $context = ['resource_type' => $resource_type];
@@ -103,7 +99,7 @@ class JsonApiDocumentTopLevelNormalizerTest extends UnitTestCase {
    * @return array
    *   The data for the test method.
    */
-  public static function denormalizeProvider() {
+  public function denormalizeProvider() {
     return [
       [
         [
@@ -211,7 +207,7 @@ class JsonApiDocumentTopLevelNormalizerTest extends UnitTestCase {
    * @covers ::denormalize
    * @dataProvider denormalizeUuidProvider
    */
-  public function testDenormalizeUuid($id, $expect_exception): void {
+  public function testDenormalizeUuid($id, $expect_exception) {
     $data['data'] = (isset($id)) ?
       ['type' => 'node--article', 'id' => $id] :
       ['type' => 'node--article'];
@@ -240,7 +236,7 @@ class JsonApiDocumentTopLevelNormalizerTest extends UnitTestCase {
   /**
    * Provides test cases for testDenormalizeUuid.
    */
-  public static function denormalizeUuidProvider() {
+  public function denormalizeUuidProvider() {
     return [
       'valid' => ['76dd5c18-ea1b-4150-9e75-b21958a2b836', FALSE],
       'missing' => [NULL, FALSE],

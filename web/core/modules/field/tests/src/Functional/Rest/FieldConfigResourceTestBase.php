@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\field\Functional\Rest;
 
 use Drupal\field\Entity\FieldConfig;
@@ -84,9 +82,7 @@ abstract class FieldConfigResourceTestBase extends ConfigEntityResourceTestBase 
       'label' => 'field_llama',
       'langcode' => 'en',
       'required' => FALSE,
-      'settings' => [
-        'allowed_formats' => [],
-      ],
+      'settings' => [],
       'status' => TRUE,
       'translatable' => TRUE,
       'uuid' => $this->entity->uuid(),

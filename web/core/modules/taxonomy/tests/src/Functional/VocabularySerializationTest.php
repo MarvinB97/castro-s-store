@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\taxonomy\Functional;
 
 use Drupal\taxonomy\Entity\Vocabulary;
@@ -36,10 +34,10 @@ class VocabularySerializationTest extends BrowserTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    Vocabulary::create(['vid' => 'test', 'name' => 'Test'])->save();
+    Vocabulary::create(['vid' => 'test'])->save();
   }
 
-  public function testSerialization(): void {
+  public function testSerialization() {
     $this->drupalGet('/vocabulary_serialization_test/test');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSame('this is the output', $this->getSession()->getPage()->getContent());

@@ -5,7 +5,6 @@ namespace Drupal\views\Plugin\views\display;
 use Drupal\Component\Plugin\DependentPluginInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -64,10 +63,8 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
   /**
    * Stores the rendered output of the display.
    *
-   * @var array|null
-   *   Render output array, or NULL if no output.
-   *
-   * @see \Drupal\views\ViewExecutable::render()
+   * @see View::render
+   * @var string
    */
   public $output = NULL;
 
@@ -128,13 +125,11 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
   /**
    * Keeps track whether the display uses exposed filters.
    */
-  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName
   public bool $has_exposed;
 
   /**
    * The default display.
    */
-  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName
   public DisplayPluginInterface $default_display;
 
   /**
@@ -151,7 +146,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
-   *   The plugin ID for the plugin instance.
+   *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
    */
@@ -162,7 +157,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
   /**
    * {@inheritdoc}
    */
-  public function initDisplay(ViewExecutable $view, array &$display, ?array &$options = NULL) {
+  public function initDisplay(ViewExecutable $view, array &$display, array &$options = NULL) {
     $this->view = $view;
 
     // Load extenders as soon as possible.
@@ -174,7 +169,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
       foreach ($extenders as $extender) {
         /** @var \Drupal\views\Plugin\views\display_extender\DisplayExtenderPluginBase $plugin */
         if ($plugin = $manager->createInstance($extender)) {
-          $extender_options = $display_extender_options[$plugin->getPluginId()] ?? [];
+          $extender_options = isset($display_extender_options[$plugin->getPluginId()]) ? $display_extender_options[$plugin->getPluginId()] : [];
           $plugin->init($this->view, $this, $extender_options);
           $this->extenders[$extender] = $plugin;
         }
@@ -195,20 +190,27 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
       unset($options['defaults']);
     }
 
-    $cid = 'views:unpack_options:' . hash('sha256', serialize([$this->options, $options])) . ':' . \Drupal::languageManager()->getCurrentLanguage()->getId();
-    if (empty(static::$unpackOptions[$cid])) {
-      $cache = \Drupal::cache('data')->get($cid);
-      if (!empty($cache->data)) {
-        $this->options = $cache->data;
+    $skip_cache = \Drupal::config('views.settings')->get('skip_cache');
+
+    if (!$skip_cache) {
+      $cid = 'views:unpack_options:' . hash('sha256', serialize([$this->options, $options])) . ':' . \Drupal::languageManager()->getCurrentLanguage()->getId();
+      if (empty(static::$unpackOptions[$cid])) {
+        $cache = \Drupal::cache('data')->get($cid);
+        if (!empty($cache->data)) {
+          $this->options = $cache->data;
+        }
+        else {
+          $this->unpackOptions($this->options, $options);
+          \Drupal::cache('data')->set($cid, $this->options, Cache::PERMANENT, $this->view->storage->getCacheTags());
+        }
+        static::$unpackOptions[$cid] = $this->options;
       }
       else {
-        $this->unpackOptions($this->options, $options);
-        \Drupal::cache('data')->set($cid, $this->options, Cache::PERMANENT, $this->view->storage->getCacheTags());
+        $this->options = static::$unpackOptions[$cid];
       }
-      static::$unpackOptions[$cid] = $this->options;
     }
     else {
-      $this->options = static::$unpackOptions[$cid];
+      $this->unpackOptions($this->options, $options);
     }
 
     // Mark the view as changed so the user has a chance to save it.
@@ -786,7 +788,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
       return $this->default_display->getOption($option);
     }
 
-    if (\array_key_exists($option, $this->options)) {
+    if (isset($this->options[$option]) || array_key_exists($option, $this->options)) {
       return $this->options[$option];
     }
   }
@@ -1122,7 +1124,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
       ];
     }
 
-    $display_comment = Unicode::truncate($this->getOption('display_comment'), 80, TRUE, TRUE);
+    $display_comment = views_ui_truncate($this->getOption('display_comment'), 80);
     $options['display_comment'] = [
       'category' => 'other',
       'title' => $this->t('Administrative comment'),
@@ -1138,7 +1140,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
     $options['title'] = [
       'category' => 'title',
       'title' => $this->t('Title'),
-      'value' => Unicode::truncate($title, 32, FALSE, TRUE),
+      'value' => views_ui_truncate($title, 32),
       'desc' => $this->t('Change the title that this display will use.'),
     ];
 
@@ -1921,7 +1923,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
 
     // Validate plugin options. Every section with "_options" in it, belongs to
     // a plugin type, like "style_options".
-    if (str_contains($section, '_options')) {
+    if (strpos($section, '_options') !== FALSE) {
       $plugin_type = str_replace('_options', '', $section);
       // Load the plugin and let it handle the validation.
       if ($plugin = $this->getPlugin($plugin_type)) {
@@ -2133,7 +2135,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
   protected function getMoreUrl() {
     $path = $this->getOption('link_url');
 
-    // Return the display URL if there is no custom URL.
+    // Return the display URL if there is no custom url.
     if ($this->getOption('link_display') !== 'custom_url' || empty($path)) {
       return $this->view->getUrl(NULL, $this->display['id']);
     }
@@ -2158,7 +2160,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
     $path = $options['path'];
     unset($options['path']);
 
-    // Create URL.
+    // Create url.
     // @todo Views should expect and store a leading /. See:
     //   https://www.drupal.org/node/2423913
     $url = UrlHelper::isExternal($path) ? Url::fromUri($path, $options) : Url::fromUserInput('/' . ltrim($path, '/'), $options);
@@ -2174,7 +2176,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
    * {@inheritdoc}
    */
   public function render() {
-    $rows = (!empty($this->view->result) || $this->view->style_plugin->evenEmpty()) ? $this->view->style_plugin->render() : [];
+    $rows = (!empty($this->view->result) || $this->view->style_plugin->evenEmpty()) ? $this->view->style_plugin->render($this->view->result) : [];
 
     $element = [
       '#theme' => $this->themeFunctions(),
@@ -2239,7 +2241,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
     $element['#feed_icons'] = !empty($view->feedIcons) ? $view->feedIcons : [];
 
     if ($view->display_handler->renderPager()) {
-      $exposed_input = $view->getExposedInput();
+      $exposed_input = $view->exposed_raw_input ?? NULL;
       $element['#pager'] = $view->renderPager($exposed_input);
     }
 
@@ -2300,7 +2302,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
   /**
    * {@inheritdoc}
    */
-  public function access(?AccountInterface $account = NULL) {
+  public function access(AccountInterface $account = NULL) {
     if (!isset($account)) {
       $account = \Drupal::currentUser();
     }
@@ -2635,7 +2637,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
   public function viewExposedFormBlocks() {
     // Avoid interfering with the admin forms.
     $route_name = \Drupal::routeMatch()->getRouteName();
-    if (str_starts_with($route_name, 'views_ui.')) {
+    if (strpos($route_name, 'views_ui.') === 0) {
       return;
     }
     $this->view->initHandlers();

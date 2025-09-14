@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\field\Unit\Plugin\migrate\process\d7;
 
 use Drupal\field\Plugin\migrate\process\d7\FieldInstanceSettings;
@@ -21,7 +19,7 @@ class FieldInstanceSettingsTest extends MigrateTestCase {
    *
    * @covers ::transform
    */
-  public function testTransformImageSettings(): void {
+  public function testTransformImageSettings() {
     $migration = $this->createMock(MigrationInterface::class);
     $plugin = new FieldInstanceSettings([], 'd7_field_instance_settings', []);
 

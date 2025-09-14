@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\jsonapi\Functional;
 
 use Drupal\Core\Url;
@@ -79,7 +77,7 @@ class ShortcutSetTest extends ConfigEntityResourceTestBase {
    */
   protected function createEntity() {
     $set = ShortcutSet::create([
-      'id' => 'llama-set',
+      'id' => 'llama_set',
       'label' => 'Llama Set',
     ]);
     $set->save();
@@ -114,7 +112,7 @@ class ShortcutSetTest extends ConfigEntityResourceTestBase {
           'status' => TRUE,
           'langcode' => 'en',
           'dependencies' => [],
-          'drupal_internal__id' => 'llama-set',
+          'drupal_internal__id' => 'llama_set',
         ],
       ],
     ];

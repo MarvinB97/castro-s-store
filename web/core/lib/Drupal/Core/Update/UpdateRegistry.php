@@ -6,11 +6,8 @@ use Drupal\Core\Config\ConfigCrudEvent;
 use Drupal\Core\Config\ConfigEvents;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\Extension\ExtensionDiscovery;
-use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\KeyValueStore\KeyValueStoreInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
-// cspell:ignore updatetype
 
 /**
  * Provides all and missing update implementations.
@@ -57,21 +54,18 @@ class UpdateRegistry implements EventSubscriberInterface {
   protected $keyValue;
 
   /**
+   * Should we respect update functions in tests.
+   *
+   * @var bool|null
+   */
+  protected $includeTests = NULL;
+
+  /**
    * The site path.
    *
    * @var string
    */
   protected $sitePath;
-
-  /**
-   * A static cache of all the extension updates scanned for.
-   *
-   * This array is keyed by Drupal root, site path, extension name and update
-   * type. The value if the extension has been searched for is TRUE.
-   *
-   * @var array
-   */
-  protected static array $loadedFiles = [];
 
   /**
    * Constructs a new UpdateRegistry.
@@ -80,36 +74,19 @@ class UpdateRegistry implements EventSubscriberInterface {
    *   The app root.
    * @param string $site_path
    *   The site path.
-   * @param array $module_list
-   *   An associative array whose keys are the names of installed modules.
+   * @param string[] $enabled_extensions
+   *   A list of enabled extensions.
    * @param \Drupal\Core\KeyValueStore\KeyValueStoreInterface $key_value
    *   The key value store.
-   * @param \Drupal\Core\Extension\ThemeHandlerInterface|bool|null $theme_handler
-   *   The theme handler.
-   * @param string $update_type
-   *   The used update name.
+   * @param bool|null $include_tests
+   *   (optional) A flag whether to include tests in the scanning of extensions.
    */
-  public function __construct(
-    $root,
-    $site_path,
-    $module_list,
-    KeyValueStoreInterface $key_value,
-    ThemeHandlerInterface|bool|null $theme_handler = NULL,
-    string $update_type = 'post_update',
-  ) {
+  public function __construct($root, $site_path, array $enabled_extensions, KeyValueStoreInterface $key_value, $include_tests = NULL) {
     $this->root = $root;
     $this->sitePath = $site_path;
-    if ($module_list !== [] && array_is_list($module_list)) {
-      @trigger_error('Calling ' . __METHOD__ . '() with the $enabled_extensions argument is deprecated in drupal:10.3.0 and is removed from drupal:11.0.0. Use an associative array whose keys are the names of installed modules instead. See https://www.drupal.org/node/3423659', E_USER_DEPRECATED);
-      $module_list = \Drupal::service('module_handler')->getModuleList();
-    }
-    if ($theme_handler === NULL || is_bool($theme_handler)) {
-      @trigger_error('Calling ' . __METHOD__ . '() with the $include_tests argument is deprecated in drupal:10.3.0 and is removed from drupal:11.0.0. See https://www.drupal.org/node/3423659', E_USER_DEPRECATED);
-      $theme_handler = \Drupal::service('theme_handler');
-    }
-    $this->enabledExtensions = array_merge(array_keys($module_list), array_keys($theme_handler->listInfo()));
+    $this->enabledExtensions = $enabled_extensions;
     $this->keyValue = $key_value;
-    $this->updateType = $update_type;
+    $this->includeTests = $include_tests;
   }
 
   /**
@@ -131,7 +108,7 @@ class UpdateRegistry implements EventSubscriberInterface {
    * Gets all available update functions.
    *
    * @return callable[]
-   *   An alphabetical list of available update functions.
+   *   A list of update functions.
    */
   protected function getAvailableUpdateFunctions() {
     $regexp = '/^(?<extension>.+)_' . $this->updateType . '_(?<name>.+)$/';
@@ -163,7 +140,7 @@ class UpdateRegistry implements EventSubscriberInterface {
    * Find all update functions that haven't been executed.
    *
    * @return callable[]
-   *   An alphabetical list of update functions that have not been executed.
+   *   A list of update functions.
    */
   public function getPendingUpdateFunctions() {
     // We need a) the list of active extensions (we get that from the config
@@ -208,7 +185,6 @@ class UpdateRegistry implements EventSubscriberInterface {
     if (file_exists($filename)) {
       include_once $filename;
     }
-    self::$loadedFiles[$this->root][$this->sitePath][$extension->getName()][$this->updateType] = TRUE;
   }
 
   /**
@@ -271,15 +247,12 @@ class UpdateRegistry implements EventSubscriberInterface {
    */
   public function getUpdateFunctions($extension_name) {
     $this->scanExtensionsAndLoadUpdateFiles($extension_name);
+    $all_functions = $this->getAvailableUpdateFunctions();
 
-    $updates = [];
-    $functions = get_defined_functions();
-    foreach (preg_grep('/^' . $extension_name . '_' . $this->updateType . '_/', $functions['user']) as $function) {
-      $updates[] = $function;
-    }
-    // Ensure that the update order is deterministic.
-    sort($updates);
-    return $updates;
+    return array_filter($all_functions, function ($function_name) use ($extension_name) {
+      [$function_extension_name] = explode("_{$this->updateType}_", $function_name);
+      return $function_extension_name === $extension_name;
+    });
   }
 
   /**
@@ -289,11 +262,7 @@ class UpdateRegistry implements EventSubscriberInterface {
    *   (optional) Limits the extension update files loaded to the provided
    *   extension.
    */
-  protected function scanExtensionsAndLoadUpdateFiles(?string $extension = NULL) {
-    if ($extension !== NULL && isset(self::$loadedFiles[$this->root][$this->sitePath][$extension][$this->updateType])) {
-      // We've already checked for this file and, if it exists, loaded it.
-      return;
-    }
+  protected function scanExtensionsAndLoadUpdateFiles(string $extension = NULL) {
     // Scan for extensions.
     $extension_discovery = new ExtensionDiscovery($this->root, TRUE, [], $this->sitePath);
     $module_extensions = $extension_discovery->scan('module');
@@ -319,7 +288,7 @@ class UpdateRegistry implements EventSubscriberInterface {
     $existing_update_functions = $this->keyValue->get('existing_updates', []);
 
     $remaining_update_functions = array_filter($existing_update_functions, function ($function_name) use ($extension) {
-      return !str_starts_with($function_name, "{$extension}_{$this->updateType}_");
+      return strpos($function_name, "{$extension}_{$this->updateType}_") !== 0;
     });
 
     $this->keyValue->set('existing_updates', array_values($remaining_update_functions));

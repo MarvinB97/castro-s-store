@@ -51,9 +51,6 @@ class MetadataBag extends SymfonyMetadataBag {
 
   /**
    * {@inheritdoc}
-   *
-   * phpcs:ignore Drupal.Commenting.FunctionComment.VoidReturn
-   * @return void
    */
   public function stampNew($lifetime = NULL) {
     parent::stampNew($lifetime);

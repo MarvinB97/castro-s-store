@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\jsonapi\Functional;
 
 use Drupal\Component\Serialization\Json;
@@ -68,7 +66,7 @@ class TermTest extends ResourceTestBase {
   protected function setUpAuthorization($method) {
     switch ($method) {
       case 'GET':
-        $this->grantPermissionsToTestedRole(['access content', 'view vocabulary labels']);
+        $this->grantPermissionsToTestedRole(['access content']);
         break;
 
       case 'POST':
@@ -282,7 +280,8 @@ class TermTest extends ResourceTestBase {
           'drupal_internal__tid' => 1,
           'status' => TRUE,
           'drupal_internal__revision_id' => 1,
-          'revision_created' => (new \DateTime())->setTimestamp((int) $this->entity->getRevisionCreationTime())->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::RFC3339),
+          'revision_created' => (new \DateTime())->setTimestamp($this->entity->getRevisionCreationTime())->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::RFC3339),
+          'revision_log_message' => NULL,
           // @todo Attempt to remove this in https://www.drupal.org/project/drupal/issues/2933518.
           'revision_translation_affected' => TRUE,
         ],
@@ -320,7 +319,7 @@ class TermTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function getExpectedGetRelationshipDocumentData($relationship_field_name, ?EntityInterface $entity = NULL) {
+  protected function getExpectedGetRelationshipDocumentData($relationship_field_name, EntityInterface $entity = NULL) {
     $data = parent::getExpectedGetRelationshipDocumentData($relationship_field_name, $entity);
     if ($relationship_field_name === 'parent') {
       $data = [
@@ -351,9 +350,9 @@ class TermTest extends ResourceTestBase {
       'data' => [
         'type' => 'taxonomy_term--camelids',
         'attributes' => [
-          'name' => 'Drama llama',
+          'name' => 'Dramallama',
           'description' => [
-            'value' => 'Drama llamas are the coolest camelids.',
+            'value' => 'Dramallamas are the coolest camelids.',
             'format' => NULL,
           ],
         ],
@@ -400,7 +399,7 @@ class TermTest extends ResourceTestBase {
    * @see \Drupal\Tests\jsonapi\Functional\NodeTest::testPatchPath()
    * @see \Drupal\Tests\rest\Functional\EntityResource\Node\NodeResourceTestBase::testPatchPath()
    */
-  public function testPatchPath(): void {
+  public function testPatchPath() {
     $this->setUpAuthorization('GET');
     $this->setUpAuthorization('PATCH');
     $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
@@ -415,7 +414,7 @@ class TermTest extends ResourceTestBase {
 
     // GET term's current normalization.
     $response = $this->request('GET', $url, $request_options);
-    $normalization = $this->getDocumentFromResponse($response);
+    $normalization = Json::decode((string) $response->getBody());
 
     // Change term's path alias.
     $normalization['data']['attributes']['path']['alias'] .= 's-rule-the-world';
@@ -425,15 +424,15 @@ class TermTest extends ResourceTestBase {
 
     // PATCH request: 200.
     $response = $this->request('PATCH', $url, $request_options);
-    $updated_normalization = $this->getDocumentFromResponse($response);
     $this->assertResourceResponse(200, FALSE, $response);
+    $updated_normalization = Json::decode((string) $response->getBody());
     $this->assertSame($normalization['data']['attributes']['path']['alias'], $updated_normalization['data']['attributes']['path']['alias']);
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getExpectedCacheTags(?array $sparse_fieldset = NULL) {
+  protected function getExpectedCacheTags(array $sparse_fieldset = NULL) {
     $tags = parent::getExpectedCacheTags($sparse_fieldset);
     if ($sparse_fieldset === NULL || in_array('description', $sparse_fieldset)) {
       $tags = Cache::mergeTags($tags, ['config:filter.format.plain_text', 'config:filter.settings']);
@@ -444,7 +443,7 @@ class TermTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function getExpectedCacheContexts(?array $sparse_fieldset = NULL) {
+  protected function getExpectedCacheContexts(array $sparse_fieldset = NULL) {
     $contexts = parent::getExpectedCacheContexts($sparse_fieldset);
     if ($sparse_fieldset === NULL || in_array('description', $sparse_fieldset)) {
       $contexts = Cache::mergeContexts($contexts, ['languages:language_interface', 'theme']);
@@ -459,13 +458,13 @@ class TermTest extends ResourceTestBase {
    *
    * @dataProvider providerTestGetIndividualTermWithParent
    */
-  public function testGetIndividualTermWithParent(array $parent_term_ids): void {
+  public function testGetIndividualTermWithParent(array $parent_term_ids) {
     // Create all possible parent terms.
     Term::create(['vid' => Vocabulary::load('camelids')->id()])
       ->setName('Lamoids')
       ->save();
     Term::create(['vid' => Vocabulary::load('camelids')->id()])
-      ->setName('Camels')
+      ->setName('Wimoids')
       ->save();
 
     // Modify the entity under test to use the provided parent terms.
@@ -485,7 +484,7 @@ class TermTest extends ResourceTestBase {
   /**
    * Data provider for ::testGetIndividualTermWithParent().
    */
-  public static function providerTestGetIndividualTermWithParent() {
+  public function providerTestGetIndividualTermWithParent() {
     return [
       'root parent: [0] (= no parent)' => [
         [0],
@@ -505,7 +504,7 @@ class TermTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public function testCollectionFilterAccess(): void {
+  public function testCollectionFilterAccess() {
     $this->doTestCollectionFilterAccessBasedOnPermissions('name', 'access content');
   }
 

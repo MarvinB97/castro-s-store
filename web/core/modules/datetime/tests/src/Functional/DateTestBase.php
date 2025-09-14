@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\datetime\Functional;
 
 use Drupal\Component\Utility\Unicode;
@@ -19,7 +17,9 @@ use Drupal\Tests\BrowserTestBase;
 abstract class DateTestBase extends BrowserTestBase {
 
   /**
-   * {@inheritdoc}
+   * Modules to enable.
+   *
+   * @var array
    */
   protected static $modules = ['node', 'entity_test', 'datetime', 'field_ui'];
 
@@ -114,8 +114,8 @@ abstract class DateTestBase extends BrowserTestBase {
    * Creates a date test field.
    */
   protected function createField() {
-    $field_name = $this->randomMachineName();
-    $field_label = Unicode::ucfirst($this->randomMachineName());
+    $field_name = mb_strtolower($this->randomMachineName());
+    $field_label = Unicode::ucfirst(mb_strtolower($this->randomMachineName()));
     $type = $this->getTestFieldType();
     $widget_type = $formatter_type = $type . '_default';
 

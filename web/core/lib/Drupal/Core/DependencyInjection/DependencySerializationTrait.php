@@ -2,9 +2,9 @@
 
 namespace Drupal\Core\DependencyInjection;
 
-use Drupal\Component\DependencyInjection\ReverseContainer;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Symfony\Component\DependencyInjection\ContainerInterface as SymfonyContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
  * Provides dependency injection friendly methods for serialization.
@@ -16,16 +16,16 @@ trait DependencySerializationTrait {
    *
    * @var array
    */
-  // phpcs:ignore Drupal.Classes.PropertyDeclaration, Drupal.NamingConventions.ValidVariableName.LowerCamelName
-  protected array $_serviceIds = [];
+  // phpcs:ignore Drupal.Classes.PropertyDeclaration
+  protected $_serviceIds = [];
 
   /**
    * An array of entity type IDs keyed by the property name of their storages.
    *
    * @var array
    */
-  // phpcs:ignore Drupal.Classes.PropertyDeclaration, Drupal.NamingConventions.ValidVariableName.LowerCamelName
-  protected array $_entityStorages = [];
+  // phpcs:ignore Drupal.Classes.PropertyDeclaration
+  protected $_entityStorages = [];
 
   /**
    * {@inheritdoc}
@@ -34,12 +34,8 @@ trait DependencySerializationTrait {
     $vars = get_object_vars($this);
     try {
       $container = \Drupal::getContainer();
-      $reverse_container = $container->get(ReverseContainer::class);
+      $mapping = \Drupal::service('kernel')->getServiceIdMapping();
       foreach ($vars as $key => $value) {
-        if (!is_object($value) || $value instanceof TranslatableMarkup) {
-          // Ignore properties that cannot be services.
-          continue;
-        }
         if ($value instanceof EntityStorageInterface) {
           // If a class member is an entity storage, only store the entity type
           // ID the storage is for, so it can be used to get a fresh object on
@@ -51,17 +47,33 @@ trait DependencySerializationTrait {
           $this->_entityStorages[$key] = $value->getEntityTypeId();
           unset($vars[$key]);
         }
-        elseif ($service_id = $reverse_container->getId($value)) {
-          // If a class member was instantiated by the dependency injection
-          // container, only store its ID so it can be used to get a fresh object
-          // on unserialization.
-          $this->_serviceIds[$key] = $service_id;
-          unset($vars[$key]);
+        elseif (is_object($value)) {
+          $service_id = FALSE;
+          // Special case the container.
+          if ($value instanceof SymfonyContainerInterface) {
+            $service_id = 'service_container';
+          }
+          else {
+            $id = $container->generateServiceIdHash($value);
+            if (isset($mapping[$id])) {
+              $service_id = $mapping[$id];
+            }
+          }
+          if ($service_id) {
+            // If a class member was instantiated by the dependency injection
+            // container, only store its ID so it can be used to get a fresh object
+            // on unserialization.
+            $this->_serviceIds[$key] = $service_id;
+            unset($vars[$key]);
+          }
         }
       }
     }
     catch (ContainerNotInitializedException $e) {
       // No container, no problem.
+    }
+    catch (ServiceNotFoundException $e) {
+      // No kernel, very strange, but still no problem.
     }
 
     return array_keys($vars);
@@ -72,17 +84,29 @@ trait DependencySerializationTrait {
    */
   #[\ReturnTypeWillChange]
   public function __wakeup() {
-    // Avoid trying to wakeup if there's nothing to do.
-    if (empty($this->_serviceIds) && empty($this->_entityStorages)) {
+    // Tests in isolation potentially unserialize in the parent process.
+    $phpunit_bootstrap = isset($GLOBALS['__PHPUNIT_BOOTSTRAP']);
+    if ($phpunit_bootstrap && !\Drupal::hasContainer()) {
       return;
     }
     $container = \Drupal::getContainer();
     foreach ($this->_serviceIds as $key => $service_id) {
+      // In rare cases, when test data is serialized in the parent process,
+      // there is a service container but it doesn't contain all expected
+      // services. To avoid fatal errors during the wrap-up of failing tests, we
+      // check for this case, too.
+      if ($phpunit_bootstrap && !$container->has($service_id)) {
+        continue;
+      }
       $this->$key = $container->get($service_id);
     }
     $this->_serviceIds = [];
 
-    if ($this->_entityStorages) {
+    // In rare cases, when test data is serialized in the parent process, there
+    // is a service container but it doesn't contain all expected services. To
+    // avoid fatal errors during the wrap-up of failing tests, we check for this
+    // case, too.
+    if ($this->_entityStorages && (!$phpunit_bootstrap || $container->has('entity_type.manager'))) {
       /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
       $entity_type_manager = $container->get('entity_type.manager');
       foreach ($this->_entityStorages as $key => $entity_type_id) {

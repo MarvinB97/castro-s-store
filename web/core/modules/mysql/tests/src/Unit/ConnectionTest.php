@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\mysql\Unit;
 
 use Drupal\mysql\Driver\Database\mysql\Connection;
@@ -34,8 +32,6 @@ class ConnectionTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    parent::setUp();
-
     $this->pdoStatement = $this->prophesize(\PDOStatement::class);
     $this->pdoConnection = $this->prophesize(\PDO::class);
   }
@@ -99,7 +95,7 @@ class ConnectionTest extends UnitTestCase {
    *
    * @return array
    */
-  public static function providerVersionAndIsMariaDb(): array {
+  public function providerVersionAndIsMariaDb(): array {
     return [
       // MariaDB.
       [

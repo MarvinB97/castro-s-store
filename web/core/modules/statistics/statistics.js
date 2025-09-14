@@ -3,8 +3,8 @@
  * Statistics functionality.
  */
 
-(function ($, drupalSettings) {
-  setTimeout(() => {
+(function ($, Drupal, drupalSettings) {
+  $(document).ready(() => {
     $.ajax({
       type: 'POST',
       cache: false,
@@ -12,4 +12,4 @@
       data: drupalSettings.statistics.data,
     });
   });
-})(jQuery, drupalSettings);
+})(jQuery, Drupal, drupalSettings);

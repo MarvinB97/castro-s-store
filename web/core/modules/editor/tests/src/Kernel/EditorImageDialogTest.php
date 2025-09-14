@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\editor\Kernel;
 
 use Drupal\Core\Form\FormState;
@@ -15,7 +13,6 @@ use Drupal\node\Entity\NodeType;
  * Tests EditorImageDialog validation and conversion functionality.
  *
  * @group editor
- * @group legacy
  */
 class EditorImageDialogTest extends EntityKernelTestBase {
 
@@ -70,10 +67,6 @@ class EditorImageDialogTest extends EntityKernelTestBase {
         'max_size' => 100,
         'scheme' => 'public',
         'directory' => '',
-        'max_dimensions' => [
-          'width' => NULL,
-          'height' => NULL,
-        ],
         'status' => TRUE,
       ],
     ]);
@@ -90,7 +83,7 @@ class EditorImageDialogTest extends EntityKernelTestBase {
   /**
    * Tests that editor image dialog works as expected.
    */
-  public function testEditorImageDialog(): void {
+  public function testEditorImageDialog() {
     $input = [
       'editor_object' => [
         'src' => '/sites/default/files/inline-images/some-file.png',
@@ -104,9 +97,7 @@ class EditorImageDialogTest extends EntityKernelTestBase {
       ],
       'dialogOptions' => [
         'title' => 'Edit Image',
-        'classes' => [
-          'ui-dialog' => 'editor-image-dialog',
-        ],
+        'dialogClass' => 'editor-image-dialog',
         'autoResize' => 'true',
       ],
       '_drupal_ajax' => '1',

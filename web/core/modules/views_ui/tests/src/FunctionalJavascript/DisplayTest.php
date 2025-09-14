@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\views_ui\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
@@ -67,14 +65,14 @@ class DisplayTest extends WebDriverTestBase {
   /**
    * Tests adding a display.
    */
-  public function testAddDisplay(): void {
+  public function testAddDisplay() {
     $this->drupalGet('admin/structure/views/view/test_content_ajax');
     $page = $this->getSession()->getPage();
 
     $page->find('css', '#views-display-menu-tabs .add')->click();
 
     // Wait for the animation to complete.
-    $this->getSession()->wait(1000, "jQuery(':animated').length === 0;");
+    $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Add the display.
     $page->find('css', '#edit-displays-top-add-display-block')->click();
@@ -86,7 +84,7 @@ class DisplayTest extends WebDriverTestBase {
   /**
    * Tests setting the administrative title.
    */
-  public function testRenameDisplayAdminName(): void {
+  public function testRenameDisplayAdminName() {
     $titles = ['New admin title', '</title><script>alert("alert!")</script>'];
     foreach ($titles as $new_title) {
       $this->drupalGet('admin/structure/views/view/test_content_ajax');
@@ -108,7 +106,7 @@ class DisplayTest extends WebDriverTestBase {
   /**
    * Tests contextual links on Views page displays.
    */
-  public function testPageContextualLinks(): void {
+  public function testPageContextualLinks() {
     $view = View::load('test_display');
     $view->enable()->save();
     $this->container->get('router.builder')->rebuildIfNeeded();
@@ -160,7 +158,7 @@ class DisplayTest extends WebDriverTestBase {
   /**
    * Test if 'add' translations are filtered from multilingual display options.
    */
-  public function testAddDisplayBlockTranslation(): void {
+  public function testAddDisplayBlockTranslation() {
 
     // Set up an additional language (Hungarian).
     $langcode = 'hu';
@@ -180,7 +178,7 @@ class DisplayTest extends WebDriverTestBase {
     $page->find('css', '#views-display-menu-tabs .add')->click();
 
     // Wait for the animation to complete.
-    $this->getSession()->wait(1000, "jQuery(':animated').length === 0;");
+    $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Look for the input element, always in second spot.
     $elements = $page->findAll('css', '.add ul input');

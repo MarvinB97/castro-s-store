@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\system\Functional\System;
 
 use Drupal\Core\Test\AssertMailTrait;
@@ -21,7 +19,9 @@ class SiteMaintenanceTest extends BrowserTestBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Modules to enable.
+   *
+   * @var array
    */
   protected static $modules = ['node'];
 
@@ -47,10 +47,7 @@ class SiteMaintenanceTest extends BrowserTestBase {
 
     // Configure 'node' as front page.
     $this->config('system.site')->set('page.front', '/node')->save();
-    $this->config('system.performance')
-      ->set('js.preprocess', 1)
-      ->set('css.preprocess', 1)
-      ->save();
+    $this->config('system.performance')->set('js.preprocess', 1)->save();
 
     // Create a user allowed to access site in maintenance mode.
     $this->user = $this->drupalCreateUser(['access site in maintenance mode']);
@@ -65,7 +62,7 @@ class SiteMaintenanceTest extends BrowserTestBase {
   /**
    * Verifies site maintenance mode functionality.
    */
-  public function testSiteMaintenance(): void {
+  public function testSiteMaintenance() {
 
     // Verify that permission message is displayed.
     $this->drupalGet(Url::fromRoute('system.site_maintenance_mode'));
@@ -76,9 +73,8 @@ class SiteMaintenanceTest extends BrowserTestBase {
     $this->assertSession()->linkByHrefExists(Url::fromRoute('user.login')->toString());
 
     $this->drupalGet(Url::fromRoute('user.page'));
-    // Aggregation should be enabled, individual assets should not be rendered.
+    // JS should be aggregated, so drupal.js is not in the page source.
     $this->assertSession()->elementNotExists('xpath', '//script[contains(@src, "/core/misc/drupal.js")]');
-    $this->assertSession()->elementNotExists('xpath', '//link[contains(@href, "/core/modules/system/css/components/align.module.css")]');
     // Turn on maintenance mode.
     $edit = [
       'maintenance_mode' => 1,
@@ -91,9 +87,8 @@ class SiteMaintenanceTest extends BrowserTestBase {
     $offline_message = $this->config('system.site')->get('name') . ' is currently under maintenance. We should be back shortly. Thank you for your patience.';
 
     $this->drupalGet(Url::fromRoute('user.page'));
-    // Aggregation should be disabled, individual assets should be rendered.
+    // JS should not be aggregated, so drupal.js is expected in the page source.
     $this->assertSession()->elementExists('xpath', '//script[contains(@src, "/core/misc/drupal.js")]');
-    $this->assertSession()->elementExists('xpath', '//link[contains(@href, "/core/modules/system/css/components/align.module.css")]');
     $this->assertSession()->pageTextContains($admin_message);
     $this->assertSession()->linkExists('Go online.');
     $this->assertSession()->linkByHrefExists(Url::fromRoute('system.site_maintenance_mode')->toString());
@@ -175,7 +170,7 @@ class SiteMaintenanceTest extends BrowserTestBase {
   /**
    * Tests responses to non-HTML requests when in maintenance mode.
    */
-  public function testNonHtmlRequest(): void {
+  public function testNonHtmlRequest() {
     $this->drupalLogout();
     \Drupal::state()->set('system.maintenance_mode', TRUE);
     $formats = ['json', 'xml', 'non-existing'];

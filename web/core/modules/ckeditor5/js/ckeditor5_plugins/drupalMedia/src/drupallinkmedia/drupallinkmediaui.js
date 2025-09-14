@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-// cspell:ignore linkui
+// cSpell:words linkui
 import { Plugin } from 'ckeditor5/src/core';
 import { LINK_KEYSTROKE } from '@ckeditor/ckeditor5-link/src/utils';
 import { ButtonView } from 'ckeditor5/src/ui';
@@ -83,7 +83,7 @@ export default class DrupalLinkMediaUI extends Plugin {
       // depending on whether the media is already linked.
       this.listenTo(button, 'execute', () => {
         if (this._isSelectedLinkedMedia(editor.model.document.selection)) {
-          plugin._addToolbarView();
+          plugin._addActionsView();
         } else {
           plugin._showUI(true);
         }

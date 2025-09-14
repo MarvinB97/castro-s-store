@@ -1,13 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\locale\Functional;
 
 use Drupal\Core\Database\Database;
 use Drupal\Core\Language\LanguageInterface;
-
-// cspell:ignore extraday lundi
 
 /**
  * Tests for updating the interface translations of projects.
@@ -57,7 +53,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
    * the most recent files are selected in the different check scenarios: check
    * for local files only, check for both local and remote files.
    */
-  public function testUpdateCheckStatus(): void {
+  public function testUpdateCheckStatus() {
     // Case when contributed modules are absent.
     $this->drupalGet('admin/reports/translations');
     $this->assertSession()->pageTextContains('Missing translations for one project');
@@ -115,7 +111,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
    *  - Source: remote and local files
    *  - Import overwrite: all existing translations
    */
-  public function testUpdateImportSourceRemote(): void {
+  public function testUpdateImportSourceRemote() {
     $config = $this->config('locale.settings');
 
     // Build the test environment.
@@ -186,7 +182,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
    *  - Source: local files only
    *  - Import overwrite: all existing translations
    */
-  public function testUpdateImportSourceLocal(): void {
+  public function testUpdateImportSourceLocal() {
     $config = $this->config('locale.settings');
 
     // Build the test environment.
@@ -246,7 +242,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
    *  - Source: remote and local files
    *  - Import overwrite: only overwrite non-customized translations
    */
-  public function testUpdateImportModeNonCustomized(): void {
+  public function testUpdateImportModeNonCustomized() {
     $config = $this->config('locale.settings');
 
     // Build the test environment.
@@ -286,7 +282,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
    *  - Source: remote and local files
    *  - Import overwrite: don't overwrite any existing translation
    */
-  public function testUpdateImportModeNone(): void {
+  public function testUpdateImportModeNone() {
     $config = $this->config('locale.settings');
 
     // Build the test environment.
@@ -322,7 +318,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
   /**
    * Tests automatic translation import when a module is enabled.
    */
-  public function testEnableUninstallModule(): void {
+  public function testEnableUninstallModule() {
     // Make the hidden test modules look like a normal custom module.
     \Drupal::state()->set('locale.test_system_info_alter', TRUE);
 
@@ -362,7 +358,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
    * enabled modules and will import them. When a language is removed the system
    * will remove all translations of that language from the database.
    */
-  public function testEnableLanguage(): void {
+  public function testEnableLanguage() {
     // Make the hidden test modules look like a normal custom module.
     \Drupal::state()->set('locale.test_system_info_alter', TRUE);
 
@@ -388,7 +384,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
     // Check if the right number of translations are added.
     $this->assertSession()->pageTextContains("One translation file imported. 8 translations were added, 0 translations were updated and 0 translations were removed.");
     // cSpell:disable-next-line
-    $this->assertTranslation('Extra day', 'extra dag', 'nl');
+    $this->assertTranslation('Extraday', 'extra dag', 'nl');
 
     // Check if the language data is added to the database.
     $connection = Database::getConnection();
@@ -412,7 +408,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
     $this->assertFalse($result, 'Files removed from file history');
 
     // Check that the Dutch translation is gone.
-    $this->assertTranslation('Extra day', '', 'nl');
+    $this->assertTranslation('Extraday', '', 'nl');
     // cSpell:disable-next-line
     $this->assertTranslation('Tuesday', 'Dienstag', 'de');
   }
@@ -420,7 +416,7 @@ class LocaleUpdateTest extends LocaleUpdateBase {
   /**
    * Tests automatic translation import when a custom language is added.
    */
-  public function testEnableCustomLanguage(): void {
+  public function testEnableCustomLanguage() {
     // Make the hidden test modules look like a normal custom module.
     \Drupal::state()->set('locale.test_system_info_alter', TRUE);
 

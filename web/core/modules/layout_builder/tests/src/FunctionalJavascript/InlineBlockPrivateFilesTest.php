@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\layout_builder\FunctionalJavascript;
 
 use Drupal\file\Entity\File;
@@ -63,7 +61,7 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
   /**
    * Tests access to private files added to inline blocks in the layout builder.
    */
-  public function testPrivateFiles(): void {
+  public function testPrivateFiles() {
     $assert_session = $this->assertSession();
     LayoutBuilderEntityViewDisplay::load('node.bundle_with_section_field.default')
       ->enableLayoutBuilder()
@@ -194,8 +192,8 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
     $page = $this->getSession()->getPage();
     $page->clickLink('Add block');
     $assert_session->assertWaitOnAjaxRequest();
-    $this->assertNotEmpty($assert_session->waitForLink('Create content block'));
-    $this->clickLink('Create content block');
+    $this->assertNotEmpty($assert_session->waitForLink('Create custom block'));
+    $this->clickLink('Create custom block');
     $assert_session->assertWaitOnAjaxRequest();
     $assert_session->fieldValueEquals('Title', '');
     $page->findField('Title')->setValue($title);
@@ -258,7 +256,7 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
    * @return string
    *   The text secret.
    */
-  protected function getFileSecret(FileInterface $file): string {
+  protected function getFileSecret(FileInterface $file) {
     return "The secret in {$file->label()}";
   }
 

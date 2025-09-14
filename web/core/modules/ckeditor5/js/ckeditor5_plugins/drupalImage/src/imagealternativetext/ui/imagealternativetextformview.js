@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* cspell:ignore focustracker keystrokehandler labeledfield labeledfieldview buttonview viewcollection focusables focuscycler switchbuttonview imagealternativetextformview imagealternativetext */
+/* cspell:words focustracker keystrokehandler labeledfield labeledfieldview buttonview viewcollection focusables focuscycler switchbuttonview imagealternativetextformview imagealternativetext */
 
 /**
  * @module drupalImage/imagealternativetext/ui/imagealternativetextformview
@@ -17,7 +17,7 @@ import {
   submitHandler,
 } from 'ckeditor5/src/ui';
 import { FocusTracker, KeystrokeHandler } from 'ckeditor5/src/utils';
-import { IconCheck, IconCancel } from '@ckeditor/ckeditor5-icons';
+import { icons } from 'ckeditor5/src/core';
 
 /**
  * A class rendering alternative text form view.
@@ -70,7 +70,7 @@ export default class ImageAlternativeTextFormView extends View {
      */
     this.saveButtonView = this._createButton(
       Drupal.t('Save'),
-      IconCheck,
+      icons.check,
       'ck-button-save',
     );
     this.saveButtonView.type = 'submit';
@@ -94,7 +94,7 @@ export default class ImageAlternativeTextFormView extends View {
      */
     this.cancelButtonView = this._createButton(
       Drupal.t('Cancel'),
-      IconCancel,
+      icons.cancel,
       'ck-button-cancel',
       'cancel',
     );
@@ -251,7 +251,7 @@ export default class ImageAlternativeTextFormView extends View {
     labeledInput
       .bind('class')
       .to(this.decorativeToggle, 'isOn', (value) => (value ? 'ck-hidden' : ''));
-    labeledInput.label = Drupal.t('Alternative text');
+    labeledInput.label = Drupal.t('Text alternative');
 
     return labeledInput;
   }

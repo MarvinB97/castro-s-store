@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\ckeditor5\Kernel;
 
 use Drupal\ckeditor5\Plugin\Editor\CKEditor5;
@@ -11,7 +9,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Symfony\Component\Validator\ConstraintViolation;
 
 /**
- * @covers \Drupal\ckeditor5\Plugin\CKEditor5PluginManager::getCKEditor5PluginConfig
+ * @covers \Drupal\ckeditor5\Plugin\CKEditor5PluginManager::getCKEditor5PluginConfig()
  * @group ckeditor5
  * @internal
  */
@@ -42,7 +40,8 @@ class WildcardHtmlSupportTest extends KernelTestBase {
   }
 
   /**
-   * @covers \Drupal\ckeditor5\Plugin\CKEditor5Plugin\SourceEditing::getDynamicPluginConfig
+   * @covers \Drupal\ckeditor5\Plugin\CKEditor5Plugin\SourceEditing::getDynamicPluginConfig()
+   * @covers \Drupal\ckeditor5\Plugin\CKEditor5PluginManager::getCKEditor5PluginConfig()
    * @dataProvider providerGhsConfiguration
    */
   public function testGhsConfiguration(string $filter_html_allowed, array $source_editing_tags, array $expected_ghs_configuration, ?array $additional_toolbar_items = []): void {
@@ -101,7 +100,7 @@ class WildcardHtmlSupportTest extends KernelTestBase {
     $this->assertEquals($expected_ghs_configuration, $ghs_configuration);
   }
 
-  public static function providerGhsConfiguration(): array {
+  public function providerGhsConfiguration(): array {
     return [
       'empty source editing' => [
         '<p> <br>',
@@ -161,7 +160,7 @@ class WildcardHtmlSupportTest extends KernelTestBase {
         ['alignment'],
       ],
       '<$text-container> with attribute from multiple plugins' => [
-        '<p data-llama class> <br>',
+        '<p data-llama class"> <br>',
         ['<$text-container data-llama>', '<p class>'],
         [
           [

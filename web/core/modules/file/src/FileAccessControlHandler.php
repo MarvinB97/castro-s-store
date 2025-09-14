@@ -60,21 +60,15 @@ class FileAccessControlHandler extends EntityAccessControlHandler {
         }
       }
     }
-    elseif ($operation == 'update') {
+
+    if ($operation == 'delete' || $operation == 'update') {
       $account = $this->prepareUser($account);
       $file_uid = $entity->get('uid')->getValue();
-      // Only the file owner can update the file entity.
-      if (isset($file_uid[0]['target_id']) && $account->id() == $file_uid[0]['target_id']) {
+      // Only the file owner can update or delete the file entity.
+      if ($account->id() == $file_uid[0]['target_id']) {
         return AccessResult::allowed();
       }
-      return AccessResult::forbidden('Only the file owner can update the file entity.');
-    }
-    elseif ($operation == 'delete') {
-      $access = AccessResult::allowedIfHasPermission($account, 'delete any file');
-      if (!$access->isAllowed() && $account->hasPermission('delete own files')) {
-        $access = $access->orIf(AccessResult::allowedIf($account->id() == $entity->getOwnerId()))->cachePerUser()->addCacheableDependency($entity);
-      }
-      return $access;
+      return AccessResult::forbidden('Only the file owner can update or delete the file entity.');
     }
 
     // No opinion.
@@ -100,7 +94,7 @@ class FileAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  protected function checkFieldAccess($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, ?FieldItemListInterface $items = NULL) {
+  protected function checkFieldAccess($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
     // Deny access to fields that should only be set on file creation, and
     // "status" which should only be changed based on a file's usage.
     $create_only_fields = [

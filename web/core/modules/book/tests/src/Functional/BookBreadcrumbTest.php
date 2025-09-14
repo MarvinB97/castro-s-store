@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\book\Functional;
 
 use Drupal\Tests\BrowserTestBase;
@@ -10,7 +8,6 @@ use Drupal\Tests\BrowserTestBase;
  * Create a book, add pages, and test book interface.
  *
  * @group book
- * @group legacy
  */
 class BookBreadcrumbTest extends BrowserTestBase {
 
@@ -120,7 +117,7 @@ class BookBreadcrumbTest extends BrowserTestBase {
     static $number = 0;
 
     $edit = [];
-    $edit['title[0][value]'] = str_pad((string) $number, 2, '0', STR_PAD_LEFT) . ' - test node ' . $this->randomMachineName(10);
+    $edit['title[0][value]'] = str_pad($number, 2, '0', STR_PAD_LEFT) . ' - test node ' . $this->randomMachineName(10);
     $edit['body[0][value]'] = 'test body ' . $this->randomMachineName(32) . ' ' . $this->randomMachineName(32);
     $edit['book[bid]'] = $book_nid;
 
@@ -150,7 +147,7 @@ class BookBreadcrumbTest extends BrowserTestBase {
   /**
    * Tests that the breadcrumb is updated when book content changes.
    */
-  public function testBreadcrumbTitleUpdates(): void {
+  public function testBreadcrumbTitleUpdates() {
     // Create a new book.
     $nodes = $this->createBreadcrumbBook();
     $book = $this->book;
@@ -186,7 +183,7 @@ class BookBreadcrumbTest extends BrowserTestBase {
   /**
    * Tests that the breadcrumb is updated when book access changes.
    */
-  public function testBreadcrumbAccessUpdates(): void {
+  public function testBreadcrumbAccessUpdates() {
     // Create a new book.
     $nodes = $this->createBreadcrumbBook();
     $this->drupalLogin($this->bookAuthor);

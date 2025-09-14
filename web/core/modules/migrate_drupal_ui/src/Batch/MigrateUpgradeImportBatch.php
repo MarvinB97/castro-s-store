@@ -293,8 +293,7 @@ class MigrateUpgradeImportBatch {
    */
   public static function onPostRowSave(MigratePostRowSaveEvent $event) {
     // We want to interrupt this batch and start a fresh one.
-    $time = \Drupal::time();
-    if (($time->getCurrentTime() - $time->getRequestTime()) > static::$maxExecTime) {
+    if ((time() - REQUEST_TIME) > static::$maxExecTime) {
       $event->getMigration()->interruptMigration(MigrationInterface::RESULT_INCOMPLETE);
     }
   }
@@ -325,8 +324,7 @@ class MigrateUpgradeImportBatch {
    */
   public static function onPostRowDelete(MigrateRowDeleteEvent $event) {
     // We want to interrupt this batch and start a fresh one.
-    $time = \Drupal::time();
-    if (($time->getCurrentTime() - $time->getRequestTime()) > static::$maxExecTime) {
+    if ((time() - REQUEST_TIME) > static::$maxExecTime) {
       $event->getMigration()->interruptMigration(MigrationInterface::RESULT_INCOMPLETE);
     }
   }
@@ -364,13 +362,8 @@ class MigrateUpgradeImportBatch {
     else {
       $type = 'error';
     }
-    $migration_id = $event->getMigration()->getPluginId();
     $source_id_string = implode(',', $event->getSourceIdValues());
-    $message = t('Migration @migration_id: Source ID @source_id: @message', [
-      '@migration_id' => $migration_id,
-      '@source_id' => $source_id_string,
-      '@message' => $event->getMessage(),
-    ]);
+    $message = t('Source ID @source_id: @message', ['@source_id' => $source_id_string, '@message' => $event->getMessage()]);
     static::$messages->display($message, $type);
   }
 

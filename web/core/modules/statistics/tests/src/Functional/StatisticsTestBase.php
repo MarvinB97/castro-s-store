@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\statistics\Functional;
 
 use Drupal\Tests\BrowserTestBase;
@@ -19,7 +17,7 @@ abstract class StatisticsTestBase extends BrowserTestBase {
   protected static $modules = ['node', 'block', 'ban', 'statistics'];
 
   /**
-   * User with permissions to ban IPs.
+   * User with permissions to ban IP's.
    *
    * @var \Drupal\user\UserInterface
    */

@@ -200,7 +200,9 @@ function views_ui_nojs_submit($form, FormStateInterface $form_state) {
 }
 
 /**
- * Adds an element to select either the default display or the current display.
+ * Add a <select> dropdown for a given section, allowing the user to
+ * change whether this info is stored on the default display or on
+ * the current display.
  */
 function views_ui_standard_display_dropdown(&$form, FormStateInterface $form_state, $section) {
   $view = $form_state->get('view');
@@ -253,7 +255,7 @@ function views_ui_standard_display_dropdown(&$form, FormStateInterface $form_sta
 
   $form['override']['dropdown'] = [
     '#type' => 'select',
-    // @todo Translators may need more context than this.
+    // @TODO: Translators may need more context than this.
     '#title' => t('For'),
     '#options' => $display_dropdown,
   ];
@@ -267,7 +269,8 @@ function views_ui_standard_display_dropdown(&$form, FormStateInterface $form_sta
 }
 
 /**
- * Creates the menu path for a standard AJAX form given the form state.
+ * Create the menu path for one of our standard AJAX forms based upon known
+ * information about the form.
  *
  * @return \Drupal\Core\Url
  *   The URL object pointing to the form URL.

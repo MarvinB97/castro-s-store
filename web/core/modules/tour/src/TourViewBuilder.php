@@ -8,9 +8,6 @@ use Drupal\Component\Utility\Html;
 
 /**
  * Provides a Tour view builder.
- *
- * Note: Does not invoke any alter hooks. In other view
- * builders, the view alter hooks are run later in the process
  */
 class TourViewBuilder extends EntityViewBuilder {
 
@@ -43,10 +40,10 @@ class TourViewBuilder extends EntityViewBuilder {
         $location = $tip->getLocation();
 
         $body_render_array = $tip->getBody();
-        $body = (string) \Drupal::service('renderer')->renderInIsolation($body_render_array);
+        $body = (string) \Drupal::service('renderer')->renderPlain($body_render_array);
         $output = [
           'body' => $body,
-          'title' => $tip->getLabel(),
+          'title' => Html::escape($tip->getLabel()),
         ];
 
         $selector = $tip->getSelector();
@@ -74,7 +71,8 @@ class TourViewBuilder extends EntityViewBuilder {
 
     // If there is at least one tour item, build the tour.
     if ($items) {
-      $key = array_key_last($items);
+      end($items);
+      $key = key($items);
       $items[$key]['cancelText'] = t('End tour');
     }
 

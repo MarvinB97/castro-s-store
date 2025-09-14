@@ -4,7 +4,6 @@ namespace Drupal\views\Plugin\views\filter;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\views\Attribute\ViewsFilter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -13,9 +12,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Including equality, like, not like, etc.
  *
  * @ingroup views_filter_handlers
+ *
+ * @ViewsFilter("string")
  */
-#[ViewsFilter("string")]
-class StringFilter extends FilterPluginBase implements FilterOperatorsInterface {
+class StringFilter extends FilterPluginBase {
 
   /**
    * All words separated by spaces or sentences encapsulated by double quotes.
@@ -42,7 +42,7 @@ class StringFilter extends FilterPluginBase implements FilterOperatorsInterface 
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
-   *   The plugin ID for the plugin instance.
+   *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
    * @param \Drupal\Core\Database\Connection $connection
@@ -97,7 +97,9 @@ class StringFilter extends FilterPluginBase implements FilterOperatorsInterface 
   }
 
   /**
-   * {@inheritdoc}
+   * This kind of construct makes it relatively easy for a child class
+   * to add or remove functionality by overriding this function and
+   * adding/removing items from this array.
    */
   public function operators() {
     $operators = [
@@ -179,14 +181,8 @@ class StringFilter extends FilterPluginBase implements FilterOperatorsInterface 
         'method' => 'opRegex',
         'values' => 1,
       ],
-      'not_regular_expression' => [
-        'title' => $this->t('Negated regular expression'),
-        'short' => $this->t('not regex'),
-        'method' => 'opNotRegex',
-        'values' => 1,
-      ],
     ];
-    // If the definition allows for the empty operator, add it.
+    // if the definition allows for the empty operator, add it.
     if (!empty($this->definition['allow empty'])) {
       $operators += [
         'empty' => [
@@ -265,7 +261,7 @@ class StringFilter extends FilterPluginBase implements FilterOperatorsInterface 
       $identifier = $this->options['expose']['identifier'];
 
       if (empty($this->options['expose']['use_operator']) || empty($this->options['expose']['operator_id'])) {
-        // Exposed and locked.
+        // exposed and locked.
         $which = in_array($this->operator, $this->operatorValues(1)) ? 'value' : 'none';
       }
       else {
@@ -350,11 +346,8 @@ class StringFilter extends FilterPluginBase implements FilterOperatorsInterface 
     }
   }
 
-  /**
-   * Adds a where clause for the operation, 'equals'.
-   */
   public function opEqual($field) {
-    $this->query->addWhere($this->options['group'], $field, $this->connection->escapeLike($this->value), $this->operator());
+    $this->query->addWhere($this->options['group'], $field, $this->value, $this->operator());
   }
 
   protected function opContains($field) {
@@ -390,7 +383,7 @@ class StringFilter extends FilterPluginBase implements FilterOperatorsInterface 
       return;
     }
 
-    // Previously this was a call_user_func_array but that's unnecessary
+    // previously this was a call_user_func_array but that's unnecessary
     // as views will unpack an array that is a single arg.
     $this->query->addWhere($this->options['group'], $where);
   }
@@ -442,16 +435,6 @@ class StringFilter extends FilterPluginBase implements FilterOperatorsInterface 
    */
   protected function opRegex($field) {
     $this->query->addWhere($this->options['group'], $field, $this->value, 'REGEXP');
-  }
-
-  /**
-   * Filters by a negated regular expression.
-   *
-   * @param string $field
-   *   The expression pointing to the queries field, for example "foo.bar".
-   */
-  protected function opNotRegex($field) {
-    $this->query->addWhere($this->options['group'], $field, $this->value, 'NOT REGEXP');
   }
 
   protected function opEmpty($field) {

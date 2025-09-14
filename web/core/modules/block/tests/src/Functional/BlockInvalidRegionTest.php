@@ -1,21 +1,22 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\block\Functional;
 
 use Drupal\Tests\BrowserTestBase;
 use Drupal\block\Entity\Block;
 
 /**
- * Tests that blocks assigned to invalid regions are disabled with a warning.
+ * Tests that an active block assigned to a non-existing region triggers the
+ * warning message and is disabled.
  *
  * @group block
  */
 class BlockInvalidRegionTest extends BrowserTestBase {
 
   /**
-   * {@inheritdoc}
+   * Modules to install.
+   *
+   * @var array
    */
   protected static $modules = ['block', 'block_test'];
 
@@ -41,7 +42,7 @@ class BlockInvalidRegionTest extends BrowserTestBase {
   /**
    * Tests that blocks assigned to invalid regions work correctly.
    */
-  public function testBlockInInvalidRegion(): void {
+  public function testBlockInInvalidRegion() {
     // Enable a test block and place it in an invalid region.
     $block = $this->drupalPlaceBlock('test_html');
     \Drupal::configFactory()->getEditable('block.block.' . $block->id())->set('region', 'invalid_region')->save();

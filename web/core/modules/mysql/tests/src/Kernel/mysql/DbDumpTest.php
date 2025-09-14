@@ -1,10 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\mysql\Kernel\mysql;
 
-use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Command\DbDumpApplication;
 use Drupal\Core\Config\DatabaseStorage;
 use Drupal\Core\Database\Database;
@@ -28,8 +26,6 @@ class DbDumpTest extends DriverSpecificKernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    // @todo system can be removed from this test once
-    //   https://www.drupal.org/project/drupal/issues/2851705 is committed.
     'system',
     'config',
     'dblog',
@@ -79,9 +75,7 @@ class DbDumpTest extends DriverSpecificKernelTestBase {
     $container->register('cache_factory', 'Drupal\Core\Cache\DatabaseBackendFactory')
       ->addArgument(new Reference('database'))
       ->addArgument(new Reference('cache_tags.invalidator.checksum'))
-      ->addArgument(new Reference('settings'))
-      ->addArgument(new Reference('serialization.phpserialize'))
-      ->addArgument(new Reference(TimeInterface::class));
+      ->addArgument(new Reference('settings'));
   }
 
   /**
@@ -91,12 +85,14 @@ class DbDumpTest extends DriverSpecificKernelTestBase {
     parent::setUp();
 
     // Create some schemas so our export contains tables.
+    $this->installSchema('system', ['sessions']);
     $this->installSchema('dblog', ['watchdog']);
     $this->installEntitySchema('block_content');
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('menu_link_content');
     $this->installEntitySchema('path_alias');
+    $this->installSchema('system', 'sequences');
 
     // Place some sample config to test for in the export.
     $this->data = [
@@ -134,6 +130,8 @@ class DbDumpTest extends DriverSpecificKernelTestBase {
       'menu_link_content_data',
       'menu_link_content_revision',
       'menu_link_content_field_revision',
+      'sequences',
+      'sessions',
       'path_alias',
       'path_alias_revision',
       'user__roles',
@@ -146,7 +144,7 @@ class DbDumpTest extends DriverSpecificKernelTestBase {
   /**
    * Tests the command directly.
    */
-  public function testDbDumpCommand(): void {
+  public function testDbDumpCommand() {
     $application = new DbDumpApplication();
     $command = $application->find('dump-database-d8-mysql');
     $command_tester = new CommandTester($command);
@@ -175,7 +173,7 @@ class DbDumpTest extends DriverSpecificKernelTestBase {
   /**
    * Tests loading the script back into the database.
    */
-  public function testScriptLoad(): void {
+  public function testScriptLoad() {
     // Generate the script.
     $application = new DbDumpApplication();
     $command = $application->find('dump-database-d8-mysql');
@@ -200,9 +198,9 @@ class DbDumpTest extends DriverSpecificKernelTestBase {
     // The tables should now exist and the schemas should match the originals.
     foreach ($this->tables as $table) {
       $this->assertTrue($schema
-        ->tableExists($table), "Table $table created by the database script.");
-      $this->assertSame($this->originalTableSchemas[$table], $this->getTableSchema($table), "The schema for $table was properly restored.");
-      $this->assertSame($this->originalTableIndexes[$table], $this->getTableIndexes($table), "The indexes for $table were properly restored.");
+        ->tableExists($table), new FormattableMarkup('Table @table created by the database script.', ['@table' => $table]));
+      $this->assertSame($this->originalTableSchemas[$table], $this->getTableSchema($table), new FormattableMarkup('The schema for @table was properly restored.', ['@table' => $table]));
+      $this->assertSame($this->originalTableIndexes[$table], $this->getTableIndexes($table), new FormattableMarkup('The indexes for @table were properly restored.', ['@table' => $table]));
     }
 
     // Ensure the test config has been replaced.

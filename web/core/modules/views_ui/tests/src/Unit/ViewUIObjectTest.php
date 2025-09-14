@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\views_ui\Unit;
 
 use Drupal\Core\Language\LanguageInterface;
@@ -20,7 +18,7 @@ class ViewUIObjectTest extends UnitTestCase {
   /**
    * Tests entity method decoration.
    */
-  public function testEntityDecoration(): void {
+  public function testEntityDecoration() {
     $method_args = [];
     $method_args['setOriginalId'] = [12];
     $method_args['setStatus'] = [TRUE];
@@ -75,7 +73,7 @@ class ViewUIObjectTest extends UnitTestCase {
   /**
    * Tests the isLocked method.
    */
-  public function testIsLocked(): void {
+  public function testIsLocked() {
     $storage = $this->getMockBuilder('Drupal\views\Entity\View')
       ->setConstructorArgs([[], 'view'])
       ->getMock();
@@ -115,7 +113,7 @@ class ViewUIObjectTest extends UnitTestCase {
   /**
    * Tests serialization of the ViewUI object.
    */
-  public function testSerialization(): void {
+  public function testSerialization() {
     $storage = new View([], 'view');
     $executable = $this->getMockBuilder('Drupal\views\ViewExecutable')
       ->disableOriginalConstructor()

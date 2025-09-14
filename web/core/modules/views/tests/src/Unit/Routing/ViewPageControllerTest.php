@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\views\Unit\Routing;
 
 use Drupal\Core\Routing\RouteMatch;
@@ -41,15 +39,13 @@ class ViewPageControllerTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    parent::setUp();
-
     $this->pageController = new ViewPageController();
   }
 
   /**
    * Tests the page controller.
    */
-  public function testPageController(): void {
+  public function testPageController() {
     $build = [
       '#type' => 'view',
       '#name' => 'test_page_view',
@@ -78,7 +74,7 @@ class ViewPageControllerTest extends UnitTestCase {
   /**
    * Tests the page controller with arguments on a non overridden page view.
    */
-  public function testHandleWithArgumentsWithoutOverridden(): void {
+  public function testHandleWithArgumentsWithoutOverridden() {
     $request = new Request();
     $request->attributes->set('view_id', 'test_page_view');
     $request->attributes->set('display_id', 'page_1');
@@ -112,7 +108,7 @@ class ViewPageControllerTest extends UnitTestCase {
    *
    * Note: This test does not care about upcasting for now.
    */
-  public function testHandleWithArgumentsOnOverriddenRoute(): void {
+  public function testHandleWithArgumentsOnOverriddenRoute() {
     $request = new Request();
     $request->attributes->set('view_id', 'test_page_view');
     $request->attributes->set('display_id', 'page_1');
@@ -149,7 +145,7 @@ class ViewPageControllerTest extends UnitTestCase {
    * This test care about upcasted values and ensures that the raw variables
    * are pulled in.
    */
-  public function testHandleWithArgumentsOnOverriddenRouteWithUpcasting(): void {
+  public function testHandleWithArgumentsOnOverriddenRouteWithUpcasting() {
     $request = new Request();
     $request->attributes->set('view_id', 'test_page_view');
     $request->attributes->set('display_id', 'page_1');
@@ -190,7 +186,7 @@ namespace Drupal\views\Routing;
 
 if (!function_exists('views_add_contextual_links')) {
 
-  function views_add_contextual_links(&$render_element, $location, $display_id, ?array $view_element = NULL) {
+  function views_add_contextual_links() {
   }
 
 }

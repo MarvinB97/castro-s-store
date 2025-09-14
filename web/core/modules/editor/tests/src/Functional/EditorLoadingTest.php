@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\editor\Functional;
 
 use Drupal\editor\Entity\Editor;
@@ -18,7 +16,9 @@ use Drupal\Tests\BrowserTestBase;
 class EditorLoadingTest extends BrowserTestBase {
 
   /**
-   * {@inheritdoc}
+   * Modules to enable.
+   *
+   * @var array
    */
   protected static $modules = ['filter', 'editor', 'editor_test', 'node'];
 
@@ -130,7 +130,7 @@ class EditorLoadingTest extends BrowserTestBase {
   /**
    * Tests loading of text editors.
    */
-  public function testLoading(): void {
+  public function testLoading() {
     // Only associate a text editor with the "Full HTML" text format.
     $editor = Editor::create([
       'format' => 'full_html',
@@ -250,7 +250,7 @@ class EditorLoadingTest extends BrowserTestBase {
   /**
    * Tests supported element types.
    */
-  public function testSupportedElementTypes(): void {
+  public function testSupportedElementTypes() {
     // Associate the unicorn text editor with the "Full HTML" text format.
     $editor = Editor::create([
       'format' => 'full_html',
@@ -316,7 +316,7 @@ class EditorLoadingTest extends BrowserTestBase {
       // Editor.module's JS settings present.
       isset($settings['editor']),
       // Editor.module's JS present.
-      str_contains($this->getSession()->getPage()->getContent(), $this->getModulePath('editor') . '/js/editor.js'),
+      strpos($this->getSession()->getPage()->getContent(), $this->getModulePath('editor') . '/js/editor.js') !== FALSE,
       // Body field.
       '//' . $type . '[@id="edit-' . $field_name . '-0-value"]',
     ];

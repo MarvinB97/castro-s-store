@@ -60,10 +60,11 @@ abstract class QueryPluginBase extends PluginBase implements CacheableDependency
   protected $groupOperator;
 
   /**
-   * Generate a query and a countQuery from all of the information supplied.
+   * Generate a query and a countquery from all of the information supplied
+   * to the object.
    *
    * @param $get_count
-   *   Provide a countQuery if this is true, otherwise provide a normal query.
+   *   Provide a countquery if this is true, otherwise provide a normal query.
    */
   public function query($get_count = FALSE) {}
 
@@ -84,7 +85,8 @@ abstract class QueryPluginBase extends PluginBase implements CacheableDependency
   public function build(ViewExecutable $view) {}
 
   /**
-   * Executes query and fills associated view object with according values.
+   * Executes the query and fills the associated view object with according
+   * values.
    *
    * Values to set: $view->result, $view->total_rows, $view->execute_time,
    * $view->pager['current_page'].

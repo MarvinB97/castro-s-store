@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\migrate\Kernel\Plugin\id_map;
 
 use Drupal\KernelTests\KernelTestBase;
@@ -21,7 +19,7 @@ class SqlDeprecationTest extends KernelTestBase {
   protected static $modules = ['migrate'];
 
   /**
-   * @covers \Drupal\migrate\Plugin\migrate\id_map\Sql::__construct
+   * @covers ::__construct
    */
   public function testOptionalParametersDeprecation(): void {
     $migration = $this->prophesize('\Drupal\migrate\Plugin\MigrationInterface')->reveal();

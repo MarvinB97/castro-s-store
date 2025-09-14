@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\editor\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
@@ -47,7 +45,7 @@ class EditorAdminTest extends WebDriverTestBase {
   /**
    * Tests that editor selection can be toggled without breaking ajax.
    */
-  public function testEditorSelection(): void {
+  public function testEditorSelection() {
     $page = $this->getSession()->getPage();
     $assert_session = $this->assertSession();
 
@@ -75,7 +73,7 @@ class EditorAdminTest extends WebDriverTestBase {
    * because the form state must change accordingly.
    * @see https://www.drupal.org/project/drupal/issues/3230829
    */
-  public function testEditorCreation(): void {
+  public function testEditorCreation() {
     $page = $this->getSession()->getPage();
     $assert_session = $this->assertSession();
 

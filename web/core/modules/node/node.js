@@ -38,16 +38,16 @@
 
       $context.find('.node-form-options').drupalSetSummary((context) => {
         const $optionsContext = $(context);
-        const values = [];
+        const vals = [];
 
-        if ($optionsContext.find('input:checked').length) {
+        if ($optionsContext.find('input').is(':checked')) {
           $optionsContext
             .find('input:checked')
             .next('label')
             .each(function () {
-              values.push(Drupal.checkPlain(this.textContent.trim()));
+              vals.push(Drupal.checkPlain(this.textContent.trim()));
             });
-          return values.join(', ');
+          return vals.join(', ');
         }
 
         return Drupal.t('Not promoted');

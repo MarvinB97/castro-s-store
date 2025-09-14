@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\mysql\Unit;
 
 use Drupal\mysql\Driver\Database\mysql\Connection;
@@ -27,8 +25,6 @@ class InstallTasksTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    parent::setUp();
-
     $this->connection = $this->prophesize(Connection::class);
   }
 
@@ -112,7 +108,7 @@ class InstallTasksTest extends UnitTestCase {
    *
    * @return array
    */
-  public static function providerNameAndMinimumVersion(): array {
+  public function providerNameAndMinimumVersion(): array {
     return [
       [
         TRUE,
@@ -130,7 +126,7 @@ class InstallTasksTest extends UnitTestCase {
   /**
    * @covers ::name
    */
-  public function testNameWithNoConnection(): void {
+  public function testNameWithNoConnection() {
     $tasks = $this->createTasksNoConnection();
     $this->assertSame('MySQL, MariaDB, Percona Server, or equivalent', $tasks->name());
   }

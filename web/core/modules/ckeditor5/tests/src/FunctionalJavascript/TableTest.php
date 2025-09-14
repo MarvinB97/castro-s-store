@@ -1,13 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Drupal\Tests\ckeditor5\FunctionalJavascript;
 
 use Drupal\ckeditor5\Plugin\Editor\CKEditor5;
 use Drupal\editor\Entity\Editor;
 use Drupal\filter\Entity\FilterFormat;
-use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\Tests\ckeditor5\Traits\CKEditor5TestTrait;
 use Symfony\Component\Validator\ConstraintViolation;
 
@@ -17,7 +14,7 @@ use Symfony\Component\Validator\ConstraintViolation;
  * @group ckeditor5
  * @internal
  */
-class TableTest extends WebDriverTestBase {
+class TableTest extends CKEditor5TestBase {
 
   use CKEditor5TestTrait;
 
@@ -61,8 +58,6 @@ class TableTest extends WebDriverTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-
-    $this->drupalCreateContentType(['type' => 'page']);
 
     FilterFormat::create([
       'format' => 'test_format',
@@ -123,7 +118,7 @@ class TableTest extends WebDriverTestBase {
   /**
    * Confirms tables convert to the expected markup.
    */
-  public function testTableConversion(): void {
+  public function testTableConversion() {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
 
@@ -150,7 +145,7 @@ class TableTest extends WebDriverTestBase {
   /**
    * Tests creating a table with caption in the UI.
    */
-  public function testTableCaptionUi(): void {
+  public function testTableCaptionUi() {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
 

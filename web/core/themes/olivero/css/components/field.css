@@ -10,8 +10,36 @@
  * Visual styles for fields.
  */
 
+/*
+ * Media query breakpoints.
+ * Processed by postcss/postcss-custom-media.
+ */
+
+/* Navigation related breakpoints */
+
+/* Grid related breakpoints */
+
+/* Grid shifts from 6 to 14 columns. */
+
+/* Width of the entire grid maxes out. */
+
 .field:not(:last-child) {
   margin-block-end: var(--sp2);
+}
+
+.node--view-mode-teaser .field {
+  margin-block-end: var(--sp);
+}
+
+.node--view-mode-teaser .field:last-child {
+  margin-block-end: 0;
+}
+
+@media (min-width: 62.5rem) {
+
+  .node--view-mode-teaser .field {
+    margin-block-end: var(--sp2);
+  }
 }
 
 .field__label {
@@ -32,8 +60,8 @@
    */
 }
 
-.field--label-inline .field__label:dir(rtl),
-.field--label-inline .field__items:dir(rtl) {
+[dir="rtl"] .field--label-inline .field__label,
+[dir="rtl"] .field--label-inline .field__items {
   float: right;
 }
 
