@@ -813,18 +813,21 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 # if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 #   include $app_root . '/' . $site_path . '/settings.local.php';
 # }
-$databases['default']['default'] = array (
-  'database' => 'railway',
-  'username' => 'root',
-  'password' => 'DvSyeNUuBbmcipDGORPahdURUoLadQFJ',
-  'prefix' => '',
-  'host' => 'ballast.proxy.rlwy.net',
-  'port' => '52744',
-  'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
-  'driver' => 'mysql',
-  'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
-);
-$settings['config_sync_directory'] = 'sites/default/files/config_gcbBuOgs0J35onJJQMwqnfuurmvexxGsCtk1pFzUnMQtAOYAu7RNXyv_3VnFKdZ8Pu_c5mRlKw/sync';
+
+if (getenv('DB_ENVIRONMENT')) {
+  $databases['default']['default'] = array (
+    'database' => getenv('DB_DATABASE'),
+    'username' => getenv('DB_USERNAME'),
+    'password' => getenv('DB_PASSWORD'),
+    'host' => getenv('DB_HOST'),
+    'port' => getenv('DB_PORT'),
+    'driver' => 'mysql',
+    'prefix' => '',
+    'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
+    'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/'
+  );
+  $settings['config_sync_directory'] = 'sites/default/files/config_gcbBuOgs0J35onJJQMwqnfuurmvexxGsCtk1pFzUnMQtAOYAu7RNXyv_3VnFKdZ8Pu_c5mRlKw/sync';
+}
 
 // Automatically generated include for settings managed by ddev.
 $ddev_settings = __DIR__ . '/settings.ddev.php';
