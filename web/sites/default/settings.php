@@ -829,23 +829,37 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 //   $settings['config_sync_directory'] = 'sites/default/files/config_gcbBuOgs0J35onJJQMwqnfuurmvexxGsCtk1pFzUnMQtAOYAu7RNXyv_3VnFKdZ8Pu_c5mRlKw/sync';
 // }
 
-if (getenv('DB_PUBLIC_URL')) {
-  $url = parse_url(getenv('DB_PUBLIC_URL'));
+// if (getenv('DB_PUBLIC_URL')) {
+//   $url = parse_url(getenv('DB_PUBLIC_URL'));
 
-  $databases['default']['default'] = [
-    'driver'    => 'mysql',
-    'database'  => ltrim($url['path'], '/'),
-    'username'  => $url['user'],
-    'password'  => $url['pass'],
-    'host'      => $url['host'],
-    'port'      => $url['port'],
-    'prefix'    => '',
-    'collation' => 'utf8mb4_general_ci',
-    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-  ];
-}
+//   $databases['default']['default'] = [
+//     'driver'    => 'mysql',
+//     'database'  => ltrim($url['path'], '/'),
+//     'username'  => $url['user'],
+//     'password'  => $url['pass'],
+//     'host'      => $url['host'],
+//     'port'      => $url['port'],
+//     'prefix'    => '',
+//     'collation' => 'utf8mb4_general_ci',
+//     'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+//   ];
+// }
 
+$driver = "mysql";
+$databases['default']['default'] = [
+  'database' => getenv('DATABASE_NAME'),
+  'username' => getenv('DATABASE_USER'),
+  'password' => getenv('DATABASE_PASSWORD'),
+  'prefix' => '',
+  'host' => getenv('DATABASE_HOST'),
+  'port' => getenv('DATABASE_PORT'),
+  'isolation_level' => 'READ COMMITTED',
+  'driver' => $driver,
+  'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
+  'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
+];
 
+$settings['config_sync_directory'] = 'sites/default/files/config_gcbBuOgs0J35onJJQMwqnfuurmvexxGsCtk1pFzUnMQtAOYAu7RNXyv_3VnFKdZ8Pu_c5mRlKw/sync';
 
 // Automatically generated include for settings managed by ddev.
 $ddev_settings = __DIR__ . '/settings.ddev.php';
