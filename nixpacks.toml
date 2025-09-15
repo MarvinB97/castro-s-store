@@ -28,7 +28,10 @@ cmds = [
   
   # Importar configuración si es necesario
   #"./vendor/bin/drush cim -y" 
+
+  # Importar files system
+  "./scripts/migrate-files.sh"
 ]
 
 [start]
-cmd = "./vendor/bin/drush cr && ./scripts/migrate-files.sh && php -S 0.0.0.0:$PORT -t web"
+cmd = "./vendor/bin/drush cr && php -S 0.0.0.0:$PORT -t web"
