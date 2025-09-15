@@ -13,21 +13,27 @@ nixPkgs = [
 
 [phases.build]
 cmds = [
-  # Crear los directorios necesarios para CSS/JS/PHP
-  "mkdir -p web/sites/default/files/css web/sites/default/files/js web/sites/default/files/php",
-  
+  # Eliminar contenido previo
+  "rm -rf web/sites/default/files",
+
+  # Asegurarse de que la carpeta exista
+  "mkdir -p web/sites/default",
+
   # Dar permisos
-  "chmod -R 777 web/sites/default/files",
-  
+  "chmod -R 777 web/sites/default/",
+
+  # Descargar y descomprimir el tar.gz
+  "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
+  "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
+  "rm web/sites/default/files.tar.gz",
+
   # Instalar dependencias
   "composer install --no-dev --optimize-autoloader",
-  
-  # Reconstruir caché y generar agregados
-  "./vendor/bin/drush cr",
-  
-  # Importar configuración si es necesario
-  #"./vendor/bin/drush cim -y" 
+
+  # Reconstruir caché
+  "./vendor/bin/drush cr"
 ]
 
 [start]
+# Aquí es donde realmente migramos los archivos en cada despliegue
 cmd = "php -S 0.0.0.0:$PORT -t web"
