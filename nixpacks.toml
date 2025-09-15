@@ -30,5 +30,4 @@ cmds = [
 ]
 
 [start]
-cmd = "./scripts/migrate-files.sh",
-cmd = "php -S 0.0.0.0:$PORT -t web"
+cmd = "./scripts/migrate-files.sh && php -S 0.0.0.0:$PORT -t web"
