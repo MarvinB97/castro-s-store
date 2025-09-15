@@ -13,27 +13,24 @@ nixPkgs = [
 
 [phases.build]
 cmds = [
-  # Crear los directorios necesarios para CSS/JS/PHP
-  "mkdir -p web/sites/default/files/css web/sites/default/files/js web/sites/default/files/php",
-  
-  # Dar permisos para evitar errores de escritura
-  "chmod -R 777 web/sites/default/files",
-  #"chmod -R +x ./scripts",
+  # Eliminar contenido previo
+  "rm -rf web/sites/default/files",
+
+  # Asegurarse de que la carpeta exista
+  "mkdir -p web/sites/default",
+
+  # Dar permisos
+  "chmod -R 777 web/sites/default/",
+
+  # Descargar y descomprimir el tar.gz
+  "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
+  "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
+  "rm web/sites/default/files.tar.gz",
 
   # Instalar dependencias
   "composer install --no-dev --optimize-autoloader",
 
-  "ls -la",
-
-  # Importar files system
-  #"./scripts/migrate-files.sh",
-
-  # Descargar y descomprimir el tar.gz
-  "curl -L $FILES_TAR_URL -o /tmp/files.tar.gz",
-  "tar -xzf /tmp/files.tar.gz -C ./web/sites/default/files",
-  "rm /tmp/files.tar.gz",
-
-  # Reconstruir caché (opcional pero recomendado en build)
+  # Reconstruir caché
   "./vendor/bin/drush cr"
 ]
 
