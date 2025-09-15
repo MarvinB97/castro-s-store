@@ -18,6 +18,7 @@ cmds = [
   
   # Dar permisos
   "chmod -R 777 web/sites/default/files",
+  "chmod +x ./scripts/migrate-files.sh",
   
   # Instalar dependencias
   "composer install --no-dev --optimize-autoloader",
