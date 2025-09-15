@@ -4,6 +4,7 @@ set -euo pipefail
 FILES_DIR="/app/web/sites/default/files"
 ARCHIVE_URL="${FILES_TAR_URL:-}"
 echo "Directorio de archivos: $FILES_DIR"
+echo "URL del archivo: $ARCHIVE_URL"
 
 mkdir -p "$FILES_DIR"
 
