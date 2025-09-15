@@ -18,9 +18,13 @@ cmds = [
   
   # Dar permisos para evitar errores de escritura
   "chmod -R 777 web/sites/default/files",
+  "chmod -R +x ./scripts",
 
   # Instalar dependencias
   "composer install --no-dev --optimize-autoloader",
+
+  # Importar files system
+  "./scripts/migrate-files.sh"
 
   # Reconstruir caché (opcional pero recomendado en build)
   "./vendor/bin/drush cr"
@@ -28,4 +32,4 @@ cmds = [
 
 [start]
 # Aquí es donde realmente migramos los archivos en cada despliegue
-cmd = "./scripts/migrate-files.sh && php -S 0.0.0.0:$PORT -t web"
+cmd = "php -S 0.0.0.0:$PORT -t web"
