@@ -9,7 +9,6 @@ echo "URL del archivo: $ARCHIVE_URL"
 
 # vaciar el directorio antes de poblar
 rm -rf "$FILES_DIR"/*
-
 mkdir -p "$FILES_DIR"
 
 if [ -n "$ARCHIVE_URL" ]; then
