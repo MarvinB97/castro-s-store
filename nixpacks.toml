@@ -24,7 +24,7 @@ cmds = [
   "composer install --no-dev --optimize-autoloader",
 
   # Importar files system
-  "./scripts/migrate-files.sh"
+  "./scripts/migrate-files.sh",
 
   # Reconstruir caché (opcional pero recomendado en build)
   "./vendor/bin/drush cr"
