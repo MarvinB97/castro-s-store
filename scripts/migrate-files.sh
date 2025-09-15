@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FILES_DIR="web/sites/default/files"
+FILES_DIR="/web/sites/default/files"
 ARCHIVE_URL="${FILES_TAR_URL:-}"
 
 echo "Directorio de archivos: $FILES_DIR"
