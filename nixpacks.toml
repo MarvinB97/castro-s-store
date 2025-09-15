@@ -23,6 +23,8 @@ cmds = [
   # Instalar dependencias
   "composer install --no-dev --optimize-autoloader",
 
+  "ls -la",
+
   # Importar files system
   #"./scripts/migrate-files.sh",
 
