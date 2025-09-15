@@ -18,17 +18,17 @@ cmds = [
   
   # Dar permisos
   "chmod -R 777 web/sites/default/files",
-  "chmod +x ./scripts/migrate-files.sh",
+  "chmod -R +x ./scripts",
   
   # Instalar dependencias
   "composer install --no-dev --optimize-autoloader",
   
   # Reconstruir caché y generar agregados
-  "./vendor/bin/drush cr",
+  #"./vendor/bin/drush cr",
   
   # Importar configuración si es necesario
   #"./vendor/bin/drush cim -y" 
 ]
 
 [start]
-cmd = "./scripts/migrate-files.sh && php -S 0.0.0.0:$PORT -t web"
+cmd = "./vendor/bin/drush cr && ./scripts/migrate-files.sh && php -S 0.0.0.0:$PORT -t web"
