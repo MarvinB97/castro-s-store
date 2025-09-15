@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FILES_DIR="/web/sites/default/files"
+FILES_DIR="/app/web/sites/default/files"
 ARCHIVE_URL="${FILES_TAR_URL:-}"        # lo pasaremos como variable de entorno en Railway
 ARCHIVE_AUTH="${FILES_TAR_AUTH:-}"      # opcional: token para autorización (Bearer)
 
