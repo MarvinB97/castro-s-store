@@ -27,6 +27,7 @@ cmds = [
   
   # Importar configuración si es necesario
   #"./vendor/bin/drush cim -y" 
+  "./vendor/bin/drush cim"
 ]
 
 [start]
