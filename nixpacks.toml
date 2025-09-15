@@ -18,13 +18,18 @@ cmds = [
   
   # Dar permisos para evitar errores de escritura
   "chmod -R 777 web/sites/default/files",
-  "chmod -R +x ./scripts",
+  #"chmod -R +x ./scripts",
 
   # Instalar dependencias
   "composer install --no-dev --optimize-autoloader",
 
   # Importar files system
-  "./scripts/migrate-files.sh",
+  #"./scripts/migrate-files.sh",
+
+  # Descargar y descomprimir el tar.gz
+  "curl -L $FILES_TAR_URL -o /tmp/files.tar.gz",
+  "tar -xzf /tmp/files.tar.gz -C web/sites/default/files",
+  "rm /tmp/files.tar.gz",
 
   # Reconstruir caché (opcional pero recomendado en build)
   "./vendor/bin/drush cr"
