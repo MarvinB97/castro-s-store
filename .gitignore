@@ -42,3 +42,14 @@
 # Ignorar archivos de entorno locales
 .env
 .env.*
+
+
+
+
+
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/profiles/contrib/
+/web/themes/contrib/
+/web/sites/default/files/
