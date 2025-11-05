@@ -31,7 +31,7 @@ cmds = [
   "composer install --no-dev --optimize-autoloader",
 
   # Reconstruir caché
-  "./vendor/bin/drush --root=web cr"
+  #"./vendor/bin/drush cr"
 ]
 
 [start]
