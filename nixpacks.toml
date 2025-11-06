@@ -28,6 +28,7 @@ cmds = [
   "rm web/sites/default/files.tar.gz",
 
   # Instalar dependencias
+  "export COMPOSER_ALLOW_SUPERUSER=1"
   "composer install --no-dev --optimize-autoloader",
 
   # Reconstruir caché
