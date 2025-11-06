@@ -845,6 +845,12 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 //   ];
 // }
 
+
+
+
+
+
+/***
 $driver = "mysql";
 $databases['default']['default'] = [
   'database' => getenv('DATABASE_NAME'),
@@ -865,4 +871,76 @@ $settings['config_sync_directory'] = 'sites/default/files/config_gcbBuOgs0J35onJ
 $ddev_settings = __DIR__ . '/settings.ddev.php';
 if (getenv('IS_DDEV_PROJECT') == 'true' && is_readable($ddev_settings)) {
   require $ddev_settings;
+}
+***/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * ---------------------------------------------------------------
+ * Database configuration using environment variables
+ * ---------------------------------------------------------------
+ * Works both locally (.env) and on Railway (environment vars)
+ */
+$database_url = getenv('DATABASE_URL');
+
+// Base config
+$databases['default']['default'] = [
+  'driver' => 'mysql',
+  'database' => getenv('DATABASE_NAME') ?: 'drupal',
+  'username' => getenv('DATABASE_USER') ?: 'root',
+  'password' => getenv('DATABASE_PASSWORD') ?: '',
+  'host' => getenv('DATABASE_HOST') ?: '127.0.0.1',
+  'port' => getenv('DATABASE_PORT') ?: '3306',
+  'prefix' => '',
+  'collation' => 'utf8mb4_general_ci',
+];
+
+// Environment setting
+$settings['environment'] = getenv('ENVIRONMENT') ?: 'local';
+
+// Public files
+$settings['file_public_path'] = 'sites/default/files';
+
+// Private files (optional)
+# $settings['file_private_path'] = '../private';
+
+// Config sync directory
+$settings['config_sync_directory'] = '../config/sync';
+
+/**
+ * Auto-download public files from remote tar.gz if available (Railway)
+ */
+if ($files_url = getenv('FILES_TAR_URL')) {
+  $target = __DIR__ . '/files';
+  if (!file_exists($target) && is_writable(__DIR__)) {
+    mkdir($target, 0777, true);
+    $tar_path = sys_get_temp_dir() . '/files.tar.gz';
+    file_put_contents($tar_path, file_get_contents($files_url));
+    try {
+      $phar = new PharData($tar_path);
+      $phar->extractTo(__DIR__ . '/');
+    } catch (Exception $e) {
+      error_log('Error extracting files.tar.gz: ' . $e->getMessage());
+    }
+    unlink($tar_path);
+  }
 }
