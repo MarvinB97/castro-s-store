@@ -9,8 +9,8 @@ COPY . /app
 
 # Instalar dependencias del sistema necesarias para Drupal
 RUN apt-get update && apt-get install -y \
-    git unzip libpng-dev libjpeg-dev libfreetype6-dev curl \
-    && docker-php-ext-install gd pdo pdo_mysql
+    git unzip libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev libzip-dev && \
+    docker-php-ext-install pdo_mysql gd bcmath
 
 # Permitir que Composer ejecute plugins
 ENV COMPOSER_ALLOW_SUPERUSER=1
