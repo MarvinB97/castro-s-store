@@ -882,8 +882,8 @@ ini_set('display_errors', TRUE);
 ini_set('display_startup_errors', TRUE);
 
 $settings['rebuild_access'] = TRUE;
-$settings['cache']['bins']['render'] = 'cache.backend.null';
-$settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.null';
+$settings['cache']['bins']['render'] = 'cache.backend.memory';
+$settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.memory';
 
 
 
