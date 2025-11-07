@@ -785,6 +785,14 @@ class Renderer implements RendererInterface {
     // - All public methods on Render elements are considered trusted.
     // - Helper classes that contain only callback methods can implement this
     //   instead of TrustedCallbackInterface.
+
+    if (!is_callable($callback)) {
+      \Drupal::logger('debug')->error('Callback inválido: <pre>@callback</pre> Tipo: @type', [
+        '@callback' => print_r($callback, TRUE),
+        '@type' => $callback_type,
+      ]);
+    }
+
     return $this->doTrustedCallback($callback, $args, $message, TrustedCallbackInterface::THROW_EXCEPTION, RenderCallbackInterface::class);
   }
 
