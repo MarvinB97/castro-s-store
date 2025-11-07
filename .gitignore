@@ -11,7 +11,7 @@
 /vendor/
 
 #tests
-#/web/core/tests/
+/web/core/tests/
 
 # Archivos de temas contribuidos (si instalas Bootstrap Barrio)
 #/web/themes/contrib/
