@@ -850,7 +850,7 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 
 
 
-/***
+
 $driver = "mysql";
 $databases['default']['default'] = [
   'database' => getenv('DATABASE_NAME'),
@@ -872,7 +872,7 @@ $ddev_settings = __DIR__ . '/settings.ddev.php';
 if (getenv('IS_DDEV_PROJECT') == 'true' && is_readable($ddev_settings)) {
   require $ddev_settings;
 }
-***/
+
 
 
 
@@ -900,6 +900,8 @@ if (getenv('IS_DDEV_PROJECT') == 'true' && is_readable($ddev_settings)) {
  * ---------------------------------------------------------------
  * Works both locally (.env) and on Railway (environment vars)
  */
+
+/***
 $database_url = getenv('DATABASE_URL');
 
 // Base config
@@ -926,9 +928,9 @@ $settings['file_public_path'] = 'sites/default/files';
 // Config sync directory
 $settings['config_sync_directory'] = '../config/sync';
 
-/**
- * Auto-download public files from remote tar.gz if available (Railway)
- */
+
+# Auto-download public files from remote tar.gz if available (Railway)
+
 if ($files_url = getenv('FILES_TAR_URL')) {
   $target = __DIR__ . '/files';
   if (!file_exists($target) && is_writable(__DIR__)) {
@@ -944,3 +946,4 @@ if ($files_url = getenv('FILES_TAR_URL')) {
     unlink($tar_path);
   }
 }
+***/

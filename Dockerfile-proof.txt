@@ -1,0 +1,45 @@
+# Imagen base de PHP 8.2 con Composer
+FROM php:8.2-apache
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Copiar el contenido del proyecto
+COPY . /app
+
+# Instalar dependencias del sistema necesarias para Drupal
+RUN apt-get update && apt-get install -y \
+    git unzip libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev libzip-dev && \
+    docker-php-ext-install pdo_mysql gd bcmath
+
+# Permitir que Composer ejecute plugins
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+# Instalar Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Instalar dependencias de Drupal
+RUN composer install --no-dev --optimize-autoloader
+
+# Regenerar archivos del core (evita errores de /core/install.php not found)
+RUN composer drupal:scaffold
+
+# Configurar permisos de sitios y archivos
+RUN mkdir -p web/sites/default && chmod -R 777 web/sites/default
+
+# Descargar los archivos (usando la misma variable que usas en Nixpacks)
+ARG FILES_TAR_URL
+RUN if [ -n "$FILES_TAR_URL" ]; then \
+      curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz && \
+      tar -xzf web/sites/default/files.tar.gz -C web/sites/default/ && \
+      rm web/sites/default/files.tar.gz; \
+    fi
+
+# Limpiar cache de Drupal (opcional)
+# RUN ./vendor/bin/drush --root=web cr || true
+
+# Exponer el puerto
+EXPOSE 8080
+
+# Comando de inicio (igual que Nixpacks)
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "web"]
