@@ -8,7 +8,7 @@
 #!.ddev/docker-compose.*.yaml
 
 # Ignorar dependencias generadas por Composer
-/vendor/
+#/vendor/
 
 #tests
 /web/core/tests/
