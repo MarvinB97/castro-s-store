@@ -851,111 +851,28 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 
 
 
-$driver = "mysql";
 $databases['default']['default'] = [
-  'database' => getenv('DATABASE_NAME'),
-  'username' => getenv('DATABASE_USER'),
-  'password' => getenv('DATABASE_PASSWORD'),
+  'driver' => 'mysql',
+  'database' => getenv('DATABASE_NAME') ?: 'railway',
+  'username' => getenv('DATABASE_USER') ?: 'root',
+  'password' => getenv('DATABASE_PASSWORD') ?: '',
   'prefix' => '',
-  'host' => getenv('DATABASE_HOST'),
-  'port' => getenv('DATABASE_PORT'),
-  'isolation_level' => 'READ COMMITTED',
-  'driver' => $driver,
+  'host' => getenv('DATABASE_HOST') ?: '127.0.0.1',
+  'port' => getenv('DATABASE_PORT') ?: '3306',
   'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
   'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
+  'collation' => 'utf8mb4_general_ci',
+  'pdo' => [
+    \PDO::ATTR_TIMEOUT => 5,
+    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+  ],
 ];
 
 $settings['config_sync_directory'] = 'sites/default/files/config_gcbBuOgs0J35onJJQMwqnfuurmvexxGsCtk1pFzUnMQtAOYAu7RNXyv_3VnFKdZ8Pu_c5mRlKw/sync';
 
-// Automatically generated include for settings managed by ddev.
-$ddev_settings = __DIR__ . '/settings.ddev.php';
-if (getenv('IS_DDEV_PROJECT') == 'true' && is_readable($ddev_settings)) {
-  require $ddev_settings;
-}
-
-
-
-
-// === DEBUG TEMPORAL EN RAILWAY ===
-error_reporting(E_ALL);
-ini_set('display_errors', TRUE);
-ini_set('display_startup_errors', TRUE);
-
-$settings['rebuild_access'] = TRUE;
-$settings['cache']['bins']['render'] = 'cache.backend.memory';
-$settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.memory';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
- * ---------------------------------------------------------------
- * Database configuration using environment variables
- * ---------------------------------------------------------------
- * Works both locally (.env) and on Railway (environment vars)
+ * Optional: Load DDEV settings locally, ignore in production.
  */
-
-/***
-$database_url = getenv('DATABASE_URL');
-
-// Base config
-$databases['default']['default'] = [
-  'driver' => 'mysql',
-  'database' => getenv('DATABASE_NAME') ?: 'drupal',
-  'username' => getenv('DATABASE_USER') ?: 'root',
-  'password' => getenv('DATABASE_PASSWORD') ?: '',
-  'host' => getenv('DATABASE_HOST') ?: '127.0.0.1',
-  'port' => getenv('DATABASE_PORT') ?: '3306',
-  'prefix' => '',
-  'collation' => 'utf8mb4_general_ci',
-];
-
-// Environment setting
-$settings['environment'] = getenv('ENVIRONMENT') ?: 'local';
-
-// Public files
-$settings['file_public_path'] = 'sites/default/files';
-
-// Private files (optional)
-# $settings['file_private_path'] = '../private';
-
-// Config sync directory
-$settings['config_sync_directory'] = '../config/sync';
-
-
-# Auto-download public files from remote tar.gz if available (Railway)
-
-if ($files_url = getenv('FILES_TAR_URL')) {
-  $target = __DIR__ . '/files';
-  if (!file_exists($target) && is_writable(__DIR__)) {
-    mkdir($target, 0777, true);
-    $tar_path = sys_get_temp_dir() . '/files.tar.gz';
-    file_put_contents($tar_path, file_get_contents($files_url));
-    try {
-      $phar = new PharData($tar_path);
-      $phar->extractTo(__DIR__ . '/');
-    } catch (Exception $e) {
-      error_log('Error extracting files.tar.gz: ' . $e->getMessage());
-    }
-    unlink($tar_path);
-  }
+if (getenv('IS_DDEV_PROJECT') === 'true' && is_readable(__DIR__ . '/settings.ddev.php')) {
+  require __DIR__ . '/settings.ddev.php';
 }
-***/
