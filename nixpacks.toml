@@ -1,7 +1,7 @@
 [phases.setup]
 nixPkgs = [
   "php82",
-  "php82Packages.composer",   
+  "php82Packages.composer",
   "php82Extensions.pdo_mysql",
   "php82Extensions.mbstring",
   "php82Extensions.gd",
@@ -9,38 +9,30 @@ nixPkgs = [
   "php82Extensions.session",
   "php82Extensions.simplexml",
   "php82Extensions.filter",
-  "php82Extensions.bcmath" 
+  "php82Extensions.bcmath"
 ]
 
 [phases.build]
 cmds = [
-  # Eliminar contenido previo
-  "rm -rf web/sites/default/files",
+  # Permitir plugins de Composer incluso como root
+  "export COMPOSER_ALLOW_SUPERUSER=1",
+  "export COMPOSER_ALLOW_PLUGIN=true",
+  "composer install --no-dev --optimize-autoloader",
 
-  # Asegurarse de que la carpeta exista
+  # Generar archivos scaffold de Drupal (core, index.php, etc.)
+  "composer drupal:scaffold",
+
+  # Reconstruir la caché de Drupal (ignora si drush no está disponible)
+  "if [ -f vendor/bin/drush ]; then ./vendor/bin/drush cr || true; fi",
+
+  # Restaurar archivos del sitio
   "mkdir -p web/sites/default",
+  "chmod -R 777 web/sites/default",
 
-  # Dar permisos
-  "chmod -R 777 web/sites/default/",
-
-  # Descargar y descomprimir el tar.gz
-  "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
-  "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
-  "rm web/sites/default/files.tar.gz",
-
-  # Instalar dependencias
-  #"export COMPOSER_ALLOW_SUPERUSER=1",
-  #"composer clear-cache",
-  "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
-  "COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",
-
-  # Verificar núcleo de Drupal
-  "ls -la web | grep core"
-
-  # Reconstruir caché
-  #"./vendor/bin/drush cr"
+  # Si usas un tar.gz de archivos subidos
+  "if [ ! -z \"$FILES_TAR_URL\" ]; then curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz && tar -xzf web/sites/default/files.tar.gz -C web/sites/default/ && rm web/sites/default/files.tar.gz; fi"
 ]
 
 [start]
-# Aquí es donde realmente migramos los archivos en cada despliegue
 cmd = "php -S 0.0.0.0:$PORT -t web"
+
