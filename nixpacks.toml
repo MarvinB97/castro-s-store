@@ -29,9 +29,9 @@ cmds = [
   "rm web/sites/default/files.tar.gz",
 
   # Instalar dependencias
-  "export COMPOSER_ALLOW_SUPERUSER=1",
-  "composer clear-cache",
-  "composer install --no-dev --optimize-autoloader",
+  #"export COMPOSER_ALLOW_SUPERUSER=1",
+  #"composer clear-cache",
+  ""COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
   "composer drupal:scaffold",
 
   # Verificar núcleo de Drupal
