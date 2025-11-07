@@ -30,7 +30,12 @@ cmds = [
 
   # Instalar dependencias
   "export COMPOSER_ALLOW_SUPERUSER=1",
+  "composer clear-cache",
   "composer install --no-dev --optimize-autoloader",
+  "composer drupal:scaffold",
+
+  # Verificar núcleo de Drupal
+  "ls -la web | grep core"
 
   # Reconstruir caché
   #"./vendor/bin/drush cr"
