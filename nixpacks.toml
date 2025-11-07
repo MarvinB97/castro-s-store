@@ -31,10 +31,10 @@ cmds = [
   
   # Desbloquear plugins de Composer y permitir ejecución como root
   #"export COMPOSER_ALLOW_SUPERUSER=1",
-  #"export COMPOSER_ALLOW_PLUGIN=true",
+  "export COMPOSER_ALLOW_PLUGIN=true",
 
   # Instalar dependencias 
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
+  "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
   
   
   # Ejecutar todos los comandos de Composer relacionados con Drupal
