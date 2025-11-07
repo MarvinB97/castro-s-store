@@ -44,7 +44,9 @@ cmds = [
   #"COMPOSER_ALLOW_SUPERUSER=1 composer info --name-only",                     # lista los módulos activos (debug útil)
 
   # Verificar núcleo de Drupal
-  #"ls -la web | grep core"
+  "ls -la web | grep core",
+  "ls web/modules/contrib | grep admin_toolbar_tools"
+
 
   # Reconstruir caché
   #"./vendor/bin/drush cr"
