@@ -32,7 +32,7 @@ cmds = [
   #"export COMPOSER_ALLOW_SUPERUSER=1",
   #"composer clear-cache",
   "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
-  "composer drupal:scaffold",
+  "COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",
 
   # Verificar núcleo de Drupal
   "ls -la web | grep core"
