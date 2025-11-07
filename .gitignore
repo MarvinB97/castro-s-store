@@ -11,27 +11,27 @@
 /vendor/
 
 #tests
-/web/core/tests/
+#/web/core/tests/
 
 # Archivos de temas contribuidos (si instalas Bootstrap Barrio)
-/web/themes/contrib/
-/web/modules/contrib/
+#/web/themes/contrib/
+#/web/modules/contrib/
 
 
 # Ignorar archivos de configuración local (solo usa settings.php en Railway si es genérico)
-/web/sites/*/settings.local.php
-/web/sites/*/services.local.yml
+#/web/sites/*/settings.local.php
+#/web/sites/*/services.local.yml
 
 # Ignorar archivos cargados por usuarios (no se deben versionar)
-/web/sites/*/files/
+#/web/sites/*/files/
 
 # Ignorar archivos temporales y cachés
-/web/sites/*/files-php/
-/web/sites/*/files/css/
-/web/sites/*/files/js/
-/web/core/assets
-/web/core/.idea
-/web/core/.vscode
+#/web/sites/*/files-php/
+#/web/sites/*/files/css/
+#/web/sites/*/files/js/
+#/web/core/assets
+#/web/core/.idea
+#/web/core/.vscode
 /.idea
 /.vscode
 
@@ -47,10 +47,9 @@
 
 
 
-/vendor/
-/web/core/
+#/web/core/
 
-/web/modules/contrib/
-/web/profiles/contrib/
-/web/themes/contrib/
+#/web/modules/contrib/
+#/web/profiles/contrib/
+#/web/themes/contrib/
 /web/sites/default/files/
