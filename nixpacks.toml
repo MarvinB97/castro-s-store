@@ -45,7 +45,7 @@ cmds = [
 
   # Verificar núcleo de Drupal
   "ls -la web | grep core",
-  "ls web/modules/contrib"
+  "ls web/modules/contrib",
 
 
   # Reconstruir caché
