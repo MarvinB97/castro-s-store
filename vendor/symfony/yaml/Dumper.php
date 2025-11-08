@@ -66,6 +66,10 @@ class Dumper
                     $output .= "\n";
                 }
 
+                if (\is_int($key) && Yaml::DUMP_NUMERIC_KEY_AS_STRING & $flags) {
+                    $key = (string) $key;
+                }
+
                 if (Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK & $flags && \is_string($value) && str_contains($value, "\n") && !str_contains($value, "\r")) {
                     $blockIndentationIndicator = $this->getBlockIndentationIndicator($value);
 
@@ -77,13 +81,13 @@ class Dumper
                         $blockChompingIndicator = '-';
                     }
 
-                    $output .= sprintf('%s%s%s |%s%s', $prefix, $dumpAsMap ? Inline::dump($key, $flags).':' : '-', '', $blockIndentationIndicator, $blockChompingIndicator);
+                    $output .= \sprintf('%s%s%s |%s%s', $prefix, $dumpAsMap ? Inline::dump($key, $flags).':' : '-', '', $blockIndentationIndicator, $blockChompingIndicator);
 
                     foreach (explode("\n", $value) as $row) {
                         if ('' === $row) {
                             $output .= "\n";
                         } else {
-                            $output .= sprintf("\n%s%s%s", $prefix, str_repeat(' ', $this->indentation), $row);
+                            $output .= \sprintf("\n%s%s%s", $prefix, str_repeat(' ', $this->indentation), $row);
                         }
                     }
 
@@ -91,14 +95,14 @@ class Dumper
                 }
 
                 if ($value instanceof TaggedValue) {
-                    $output .= sprintf('%s%s !%s', $prefix, $dumpAsMap ? Inline::dump($key, $flags).':' : '-', $value->getTag());
+                    $output .= \sprintf('%s%s !%s', $prefix, $dumpAsMap ? Inline::dump($key, $flags).':' : '-', $value->getTag());
 
                     if (Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK & $flags && \is_string($value->getValue()) && str_contains($value->getValue(), "\n") && !str_contains($value->getValue(), "\r\n")) {
                         $blockIndentationIndicator = $this->getBlockIndentationIndicator($value->getValue());
-                        $output .= sprintf(' |%s', $blockIndentationIndicator);
+                        $output .= \sprintf(' |%s', $blockIndentationIndicator);
 
                         foreach (explode("\n", $value->getValue()) as $row) {
-                            $output .= sprintf("\n%s%s%s", $prefix, str_repeat(' ', $this->indentation), $row);
+                            $output .= \sprintf("\n%s%s%s", $prefix, str_repeat(' ', $this->indentation), $row);
                         }
 
                         continue;
@@ -122,7 +126,7 @@ class Dumper
 
                 $willBeInlined = $inline - 1 <= 0 || !\is_array($value) && $dumpObjectAsInlineMap || empty($value);
 
-                $output .= sprintf('%s%s%s%s',
+                $output .= \sprintf('%s%s%s%s',
                     $prefix,
                     $dumpAsMap ? Inline::dump($key, $flags).':' : '-',
                     $willBeInlined ? ' ' : "\n",
@@ -136,14 +140,14 @@ class Dumper
 
     private function dumpTaggedValue(TaggedValue $value, int $inline, int $indent, int $flags, string $prefix): string
     {
-        $output = sprintf('%s!%s', $prefix ? $prefix.' ' : '', $value->getTag());
+        $output = \sprintf('%s!%s', $prefix ? $prefix.' ' : '', $value->getTag());
 
         if (Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK & $flags && \is_string($value->getValue()) && str_contains($value->getValue(), "\n") && !str_contains($value->getValue(), "\r\n")) {
             $blockIndentationIndicator = $this->getBlockIndentationIndicator($value->getValue());
-            $output .= sprintf(' |%s', $blockIndentationIndicator);
+            $output .= \sprintf(' |%s', $blockIndentationIndicator);
 
             foreach (explode("\n", $value->getValue()) as $row) {
-                $output .= sprintf("\n%s%s%s", $prefix, str_repeat(' ', $this->indentation), $row);
+                $output .= \sprintf("\n%s%s%s", $prefix, str_repeat(' ', $this->indentation), $row);
             }
 
             return $output;

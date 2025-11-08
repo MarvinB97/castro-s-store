@@ -23,8 +23,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Mapping\AutoMappingStrategy;
+use Symfony\Component\Validator\Mapping\CascadingStrategy;
 use Symfony\Component\Validator\Mapping\ClassMetadataInterface;
 use Symfony\Component\Validator\Mapping\Factory\MetadataFactoryInterface;
+use Symfony\Component\Validator\Mapping\GenericMetadata;
+use Symfony\Component\Validator\Mapping\TraversalStrategy;
 
 /**
  * A console command to debug Validators information.
@@ -43,6 +47,9 @@ class DebugCommand extends Command
         $this->validator = $validator;
     }
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         $this
@@ -73,7 +80,7 @@ EOF
             }
         } catch (DirectoryNotFoundException) {
             $io = new SymfonyStyle($input, $output);
-            $io->error(sprintf('Neither class nor path were found with "%s" argument.', $input->getArgument('class')));
+            $io->error(\sprintf('Neither class nor path were found with "%s" argument.', $input->getArgument('class')));
 
             return 1;
         }
@@ -84,7 +91,7 @@ EOF
     private function dumpValidatorsForClass(InputInterface $input, OutputInterface $output, string $class): void
     {
         $io = new SymfonyStyle($input, $output);
-        $title = sprintf('<info>%s</info>', $class);
+        $title = \sprintf('<info>%s</info>', $class);
         $rows = [];
         $dump = new Dumper($output);
 
@@ -159,6 +166,31 @@ EOF
 
         $propertyMetadata = $classMetadata->getPropertyMetadata($constrainedProperty);
         foreach ($propertyMetadata as $metadata) {
+            $autoMapingStrategy = 'Not supported';
+            if ($metadata instanceof GenericMetadata) {
+                $autoMapingStrategy = match ($metadata->getAutoMappingStrategy()) {
+                    AutoMappingStrategy::ENABLED => 'Enabled',
+                    AutoMappingStrategy::DISABLED => 'Disabled',
+                    AutoMappingStrategy::NONE => 'None',
+                };
+            }
+            $traversalStrategy = 'None';
+            if (TraversalStrategy::TRAVERSE === $metadata->getTraversalStrategy()) {
+                $traversalStrategy = 'Traverse';
+            }
+            if (TraversalStrategy::IMPLICIT === $metadata->getTraversalStrategy()) {
+                $traversalStrategy = 'Implicit';
+            }
+
+            $data[] = [
+                'class' => 'property options',
+                'groups' => [],
+                'options' => [
+                    'cascadeStrategy' => CascadingStrategy::CASCADE === $metadata->getCascadingStrategy() ? 'Cascade' : 'None',
+                    'autoMappingStrategy' => $autoMapingStrategy,
+                    'traversalStrategy' => $traversalStrategy,
+                ],
+            ];
             foreach ($metadata->getConstraints() as $constraint) {
                 $data[] = [
                     'class' => $constraint::class,

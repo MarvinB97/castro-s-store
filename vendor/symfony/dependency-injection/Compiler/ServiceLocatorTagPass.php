@@ -30,6 +30,8 @@ final class ServiceLocatorTagPass extends AbstractRecursivePass
 {
     use PriorityTaggedServiceTrait;
 
+    protected bool $skipScalars = true;
+
     protected function processValue(mixed $value, bool $isRoot = false): mixed
     {
         if ($value instanceof ServiceLocatorArgument) {
@@ -59,7 +61,7 @@ final class ServiceLocatorTagPass extends AbstractRecursivePass
         }
 
         if (!\is_array($services)) {
-            throw new InvalidArgumentException(sprintf('Invalid definition for service "%s": an array of references is expected as first argument when the "container.service_locator" tag is set.', $this->currentId));
+            throw new InvalidArgumentException(\sprintf('Invalid definition for service "%s": an array of references is expected as first argument when the "container.service_locator" tag is set.', $this->currentId));
         }
 
         $i = 0;
@@ -100,7 +102,7 @@ final class ServiceLocatorTagPass extends AbstractRecursivePass
         return new Reference($id);
     }
 
-    public static function register(ContainerBuilder $container, array $map, string $callerId = null): Reference
+    public static function register(ContainerBuilder $container, array $map, ?string $callerId = null): Reference
     {
         foreach ($map as $k => $v) {
             $map[$k] = new ServiceClosureArgument($v);
