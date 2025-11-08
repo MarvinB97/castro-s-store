@@ -6,6 +6,8 @@ global-styling:
     component:
       css/style.css: {}
       css/colors.css: {}
+      # fontawesome para iconos:
+      https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css: { type: external, minified: true }
 bootstrap:
   js:
     /libraries/popper.js/dist/umd/popper.min.js: { weight: -19 }
