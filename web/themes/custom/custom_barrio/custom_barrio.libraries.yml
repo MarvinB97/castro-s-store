@@ -2,7 +2,7 @@ global-styling:
   version: VERSION
   js:
     js/global.js: {}
-  css:
+  css: 
     component:
       css/style.css: {}
       css/colors.css: {}
