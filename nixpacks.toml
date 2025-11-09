@@ -28,29 +28,11 @@ cmds = [
   "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
   "rm web/sites/default/files.tar.gz",
 
-  
-  # Desbloquear plugins de Composer y permitir ejecución como root
-  #"export COMPOSER_ALLOW_SUPERUSER=1",
-  "export COMPOSER_ALLOW_PLUGIN=true",
-
-  # Instalar dependencias 
-  "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
-  
-  
-  # Ejecutar todos los comandos de Composer relacionados con Drupal
-  "COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",                     # reconstruye el core y archivos base
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload -o",                    # genera autoload optimizado
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer validate --no-check-publish",         # valida el archivo composer.json
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer info --name-only",                     # lista los módulos activos (debug útil)
-
-  # Verificar núcleo de Drupal
-  "ls -la web | grep core",
-  "ls web/modules/contrib",
-
+  # Instalar dependencias
+  "composer install --no-dev --optimize-autoloader",
 
   # Reconstruir caché
-  "php vendor/bin/drush cr",
-  #"php vendor/bin/drush cache:rebuild"
+  "./vendor/bin/drush cr"
 ]
 
 [start]
