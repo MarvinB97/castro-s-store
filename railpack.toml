@@ -1,5 +1,8 @@
+[env]
+COMPOSER_ALLOW_SUPERUSER = "1"
+COMPOSER_ALLOW_PLUGIN = "true"
+
 [setup]
-# Paquetes del sistema necesarios
 packages = [
   "php8.2",
   "composer",
@@ -17,20 +20,13 @@ packages = [
 
 [build]
 commands = [
-  # Limpiar archivos previos
   "rm -rf web/sites/default/files",
   "mkdir -p web/sites/default",
   "chmod -R 777 web/sites/default/",
-
-  # Descargar y descomprimir los archivos
   "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
   "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
   "rm web/sites/default/files.tar.gz",
-
-  # Instalar dependencias de Composer (con permisos elevados)
   "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
-
-  # Reconstruir el core y limpiar cachés de Drupal
   "COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",
   "ls -la web | grep core",
   "ls web/modules/contrib",
@@ -39,5 +35,4 @@ commands = [
 ]
 
 [start]
-# Servir el sitio Drupal
 command = "php -S 0.0.0.0:$PORT -t web"
