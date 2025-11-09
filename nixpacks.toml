@@ -54,5 +54,8 @@ cmds = [
 
 [start]
 # Aquí es donde realmente migramos los archivos en cada despliegue
-cmd = "php -S 0.0.0.0:$PORT -t web"
-#cmd = "php -d memory_limit=512M -S 0.0.0.0:$PORT -t web web/.ht.router.php"
+cmd = [
+  "chmod -R 777 web/sites/default",
+  "php -S 0.0.0.0:$PORT -t web"
+]
+#"php -d memory_limit=512M -S 0.0.0.0:$PORT -t web web/.ht.router.php"
