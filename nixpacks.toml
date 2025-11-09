@@ -54,7 +54,8 @@ cmds = [
 
 [start]
 # Aquí es donde realmente migramos los archivos en cada despliegue
-cmd = [
+#cmd = 
+cmds = [
   "chmod -R 777 web/sites/default",
   "php -S 0.0.0.0:$PORT -t web"
 ]
