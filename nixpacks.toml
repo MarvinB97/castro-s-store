@@ -8,7 +8,8 @@ nixPkgs = [
   "php82Extensions.dom",
   "php82Extensions.session",
   "php82Extensions.simplexml",
-  "php82Extensions.filter"
+  "php82Extensions.filter",
+  "php82Extensions.bcmath" 
 ]
 
 [phases.build]
