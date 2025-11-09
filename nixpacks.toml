@@ -32,7 +32,7 @@ cmds = [
   "composer install --no-dev --optimize-autoloader",
 
   # Reconstruir caché
-  "php ./vendor/bin/drush cr"
+  "php vendor/bin/drush cr"
 ]
 
 [start]
