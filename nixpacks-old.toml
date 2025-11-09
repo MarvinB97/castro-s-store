@@ -1,0 +1,58 @@
+[phases.setup]
+nixPkgs = [
+  "php82",
+  "php82Packages.composer",   
+  "php82Extensions.pdo_mysql",
+  "php82Extensions.mbstring",
+  "php82Extensions.gd",
+  "php82Extensions.dom",
+  "php82Extensions.session",
+  "php82Extensions.simplexml",
+  "php82Extensions.filter",
+  "php82Extensions.bcmath" 
+]
+
+[phases.build]
+cmds = [
+  # Eliminar contenido previo
+  "rm -rf web/sites/default/files",
+
+  # Asegurarse de que la carpeta exista
+  "mkdir -p web/sites/default",
+
+  # Dar permisos
+  "chmod -R 777 web/sites/default/",
+
+  # Descargar y descomprimir el tar.gz
+  "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
+  "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
+  "rm web/sites/default/files.tar.gz",
+
+  
+  # Desbloquear plugins de Composer y permitir ejecución como root
+  #"export COMPOSER_ALLOW_SUPERUSER=1",
+  "export COMPOSER_ALLOW_PLUGIN=true",
+
+  # Instalar dependencias 
+  "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
+  
+  
+  # Ejecutar todos los comandos de Composer relacionados con Drupal
+  "COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",                     # reconstruye el core y archivos base
+  #"COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload -o",                    # genera autoload optimizado
+  #"COMPOSER_ALLOW_SUPERUSER=1 composer validate --no-check-publish",         # valida el archivo composer.json
+  #"COMPOSER_ALLOW_SUPERUSER=1 composer info --name-only",                     # lista los módulos activos (debug útil)
+
+  # Verificar núcleo de Drupal
+  "ls -la web | grep core",
+  "ls web/modules/contrib",
+
+
+  # Reconstruir caché
+  "php vendor/bin/drush cr",
+  "php vendor/bin/drush cache:rebuild"
+]
+
+[start]
+# Aquí es donde realmente migramos los archivos en cada despliegue
+cmd = "php -S 0.0.0.0:$PORT -t web"
