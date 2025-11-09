@@ -29,7 +29,7 @@
 /web/sites/*/files-php/
 /web/sites/*/files/css/
 /web/sites/*/files/js/
-/web/core/assets
+#/web/core/assets
 /web/core/.idea
 /web/core/.vscode
 /.idea
