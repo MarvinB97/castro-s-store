@@ -1,0 +1,47 @@
+[variables]
+COMPOSER_ALLOW_SUPERUSER = "1"
+COMPOSER_ALLOW_PLUGIN = "true"
+
+[phases.setup]
+nixPkgs = [
+  "php83",
+  "composer",
+  "php83Packages.mysql",
+  "php83Packages.mbstring",
+  "php83Packages.gd",
+  "php83Packages.dom",
+  "php83Packages.session",
+  "php83Packages.simplexml",
+  "php83Packages.filter",
+  "php83Packages.bcmath",
+  "curl",
+  "tar"
+]
+
+[phases.build]
+commands = [
+  # Limpieza y preparación de la carpeta files
+  "rm -rf web/sites/default/files",
+  "mkdir -p web/sites/default",
+  "chmod -R 777 web/sites/default/",
+  
+  # Restaurar los archivos de files desde el backup remoto
+  "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
+  "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
+  "rm web/sites/default/files.tar.gz",
+
+  # Instalar dependencias de Drupal
+  "composer install --no-dev --optimize-autoloader",
+  "composer drupal:scaffold",
+
+  # Comprobaciones opcionales
+  "ls -la web | grep core || true",
+  "ls web/modules/contrib || true",
+
+  # Reconstruir caché de Drupal
+  "php vendor/bin/drush cr",
+  "php vendor/bin/drush cache:rebuild"
+]
+
+[start]
+cmd = "php -S 0.0.0.0:${PORT} -t web"
