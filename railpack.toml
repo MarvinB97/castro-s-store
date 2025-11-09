@@ -4,16 +4,16 @@ COMPOSER_ALLOW_PLUGIN = "true"
 
 [setup]
 packages = [
-  "php8.2",
+  "php8.3",
   "composer",
-  "php8.2-mysql",
-  "php8.2-mbstring",
-  "php8.2-gd",
-  "php8.2-dom",
-  "php8.2-session",
-  "php8.2-simplexml",
-  "php8.2-filter",
-  "php8.2-bcmath",
+  "php8.3-mysql",
+  "php8.3-mbstring",
+  "php8.3-gd",
+  "php8.3-dom",
+  "php8.3-session",
+  "php8.3-simplexml",
+  "php8.3-filter",
+  "php8.3-bcmath",
   "curl",
   "tar"
 ]
