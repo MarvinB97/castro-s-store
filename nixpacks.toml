@@ -1,15 +1,15 @@
 [phases.setup]
 nixPkgs = [
-  "php83",
-  "php83Packages.composer",   
-  "php83Extensions.pdo_mysql",
-  "php83Extensions.mbstring",
-  "php83Extensions.gd",
-  "php83Extensions.dom",
-  "php83Extensions.session",
-  "php83Extensions.simplexml",
-  "php83Extensions.filter",
-  "php83Extensions.bcmath" 
+  "php82",
+  "php82Packages.composer",   
+  "php82Extensions.pdo_mysql",
+  "php82Extensions.mbstring",
+  "php82Extensions.gd",
+  "php82Extensions.dom",
+  "php82Extensions.session",
+  "php82Extensions.simplexml",
+  "php82Extensions.filter",
+  "php82Extensions.bcmath" 
 ]
 
 [phases.build]
@@ -54,5 +54,4 @@ cmds = [
 
 [start]
 # Aquí es donde realmente migramos los archivos en cada despliegue
-cmd = "chmod -R 777 web/sites/default && php vendor/bin/drush cr && php -S 0.0.0.0:$PORT -t web"
-#"php -d memory_limit=512M -S 0.0.0.0:$PORT -t web web/.ht.router.php"
+cmd = "php -S 0.0.0.0:$PORT -t web"
