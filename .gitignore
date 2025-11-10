@@ -38,7 +38,7 @@
 
 # =======================================
 # Configuración versionable (sí va a Git)
-/web/sites/*/config/sync/
+#/web/sites/*/config/sync/
 
 #se debe subir la configuracion del sitio
 !/web/sites/default/files/config_gcbBuOgs0J35onJJQMwqnfuurmvexxGsCtk1pFzUnMQtAOYAu7RNXyv_3VnFKdZ8Pu_c5mRlKw/sync/
