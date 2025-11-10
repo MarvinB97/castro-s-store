@@ -22,9 +22,9 @@
 /web/sites/*/services.local.yml
 /web/sites/*/default.settings.php
 /web/sites/*/default.services.yml
-/web/sites/*/development.services.yml
-/web/sites/*/example.settings.local.php
-/web/sites/*/example.sites.php
+/web/sites/development.services.yml
+/web/sites/example.settings.local.php
+/web/sites/example.sites.php
 
 # =======================================
 # Archivos cargados por usuarios (subir solo a storage remoto)
