@@ -13,12 +13,15 @@ cmds = [
   "mkdir -p web/sites/default/files",
   "chmod -R 777 web/sites/default",
   "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
-  "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/files/",
+  "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
   "rm web/sites/default/files.tar.gz",
   "ls -la web/sites/default/files",
 
 
-  "rm -rf web/core vendor",
+  # Asegurar que composer existe y limpiar residuos previos
+  "composer --version",
+  "rm -rf vendor web/core",
+  
   "composer install --no-dev --optimize-autoloader"
 ]
 
