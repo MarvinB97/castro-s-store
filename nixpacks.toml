@@ -3,30 +3,10 @@
 # Compatible con Railway, Render o Fly.io
 # =======================================
 
-[phases.setup]
-# Instala dependencias necesarias
-nixPkgs = [
-  "php83",
-  "php83Extensions.curl",
-  "php83Extensions.dom",
-  "php83Extensions.fileinfo",
-  "php83Extensions.filter",
-  "php83Extensions.gd",
-  "php83Extensions.json",
-  "php83Extensions.mbstring",
-  "php83Extensions.mysqli",
-  "php83Extensions.opcache",
-  "php83Extensions.pdo",
-  "php83Extensions.pdo_mysql",
-  "php83Extensions.session",
-  "php83Extensions.simplexml",
-  "php83Extensions.xml",
-  "php83Extensions.zip",
-  "nginx",
-  "composer"
-]
+[build]
+builder = "nixpacks/php"
 
-[phases.install]
+[phases.setup]
 # Instalar dependencias PHP de composer
 cmds = [
   # Crear carpeta y restaurar tus imágenes ANTES del composer install
@@ -41,12 +21,12 @@ cmds = [
   "composer install --no-dev --optimize-autoloader"
 ]
 
-[phases.build]
+#[phases.build]
 # Limpia cachés y prepara el entorno
-cmds = [
-  "mkdir -p web/sites/default/files",
-  "chmod -R 775 web/sites/default/files"
-]
+#cmds = [
+#  "mkdir -p web/sites/default/files",
+#  "chmod -R 775 web/sites/default/files"
+#]
 
 [start]
 # Inicia el servidor PHP embebido
