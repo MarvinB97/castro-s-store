@@ -34,8 +34,7 @@ cmds = [
   "ls -l web/core | grep install.php || (echo '❌ Drupal core no encontrado' && exit 1)",
 
   # Reconstruir caché
-  "php vendor/bin/drush cr",
-  "php vendor/bin/drush cache:rebuild"
+  "php vendor/bin/drush cr"
 ]
 
 #  Fase de ejecución (inicio del servidor PHP)
