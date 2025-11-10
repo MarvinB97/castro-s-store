@@ -30,6 +30,7 @@ cmds = [
 
   # Instalar dependencias del proyecto
   "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
+  "ls -l web/core"
 ]
 
 # 🚀 Fase de ejecución (inicio del servidor PHP)
