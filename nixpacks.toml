@@ -28,13 +28,15 @@ cmds = [
   "rm web/sites/default/files.tar.gz",
   "ls -la web/sites/default/files",
 
-  # Instalar dependencias del proyecto
-  "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
+  # Instalar dependencias del proyecto optimizado
+  #"COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
+  # Instalar dependencias del proyecto completo pero lento (cuando se hacen updates de drupal)
+  "COMPOSER_ALLOW_SUPERUSER=1 composer install",
   # Confirmar que core existe
   "ls -l web/core | grep install.php || (echo '❌ Drupal core no encontrado' && exit 1)",
 
   # Reconstruir caché
-  "php vendor/bin/drush cr"
+  "./vendor/bin/drush cr"
 ]
 
 #  Fase de ejecución (inicio del servidor PHP)
