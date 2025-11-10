@@ -6,9 +6,20 @@
 [build]
 builder = "nixpacks/php"
 
+# 🧱 Dependencias del entorno
 [phases.setup]
-# Instalar dependencias PHP de composer
+nixPkgs = ["php", "phpPackages.composer", "nginx", "nodejs_18", "libmysqlclient"]
+
+# 🧩 Fase de compilación — aquí va Composer
+[phases.build]
 cmds = [
+  # Mostrar versión (diagnóstico)
+  "composer --version",
+
+  # Limpieza previa
+  "rm -rf vendor web/core",
+
+
   # Crear carpeta y restaurar tus imágenes ANTES del composer install
   "mkdir -p web/sites/default/files",
   "chmod -R 777 web/sites/default",
@@ -17,30 +28,10 @@ cmds = [
   "rm web/sites/default/files.tar.gz",
   "ls -la web/sites/default/files",
 
-
-  # Asegurar que composer existe y limpiar residuos previos
-  "composer --version",
-  "rm -rf vendor web/core",
-  
-  "composer install --no-dev --optimize-autoloader"
+  # Instalar dependencias del proyecto
+  "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
 ]
 
-#[phases.build]
-# Limpia cachés y prepara el entorno
-#cmds = [
-#  "mkdir -p web/sites/default/files",
-#  "chmod -R 775 web/sites/default/files"
-#]
-
+# 🚀 Fase de ejecución (inicio del servidor PHP)
 [start]
-# Inicia el servidor PHP embebido
-# Puedes cambiar el puerto si Railway lo indica (usualmente $PORT)
 cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
-
-# =======================================
-# Variables recomendadas
-# =======================================
-# En Railway configura:
-# - DATABASE_URL = mysql://USER:PASSWORD@HOST:PORT/DATABASE?ssl-mode=REQUIRED
-# - DRUPAL_ENVIRONMENT = production
-# - PORT = 8080
