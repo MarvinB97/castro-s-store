@@ -18,6 +18,7 @@ cmds = [
   "ls -la web/sites/default/files",
 
 
+  "rm -rf web/core vendor",
   "composer install --no-dev --optimize-autoloader"
 ]
 
