@@ -100,5 +100,10 @@
                 "      composer remove drupal/core-project-message"
             ]
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "chmod 755 web/sites/default"
+        ]
     }
 }

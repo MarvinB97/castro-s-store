@@ -1,58 +1,62 @@
+# =======================================
+# Nixpacks config for Drupal 10 (PHP 8.3)
+# Compatible con Railway, Render o Fly.io
+# =======================================
+
 [phases.setup]
+# Instala dependencias necesarias
 nixPkgs = [
-  "php82",
-  "php82Packages.composer",   
-  "php82Extensions.pdo_mysql",
-  "php82Extensions.mbstring",
-  "php82Extensions.gd",
-  "php82Extensions.dom",
-  "php82Extensions.session",
-  "php82Extensions.simplexml",
-  "php82Extensions.filter",
-  "php82Extensions.bcmath" 
+  "php83",
+  "php83Extensions.curl",
+  "php83Extensions.dom",
+  "php83Extensions.fileinfo",
+  "php83Extensions.filter",
+  "php83Extensions.gd",
+  "php83Extensions.json",
+  "php83Extensions.mbstring",
+  "php83Extensions.mysqli",
+  "php83Extensions.opcache",
+  "php83Extensions.pdo",
+  "php83Extensions.pdo_mysql",
+  "php83Extensions.session",
+  "php83Extensions.simplexml",
+  "php83Extensions.xml",
+  "php83Extensions.zip",
+  "nginx",
+  "composer"
+]
+
+[phases.install]
+# Instalar dependencias PHP de composer
+cmds = [
+  # Crear carpeta y restaurar tus imágenes ANTES del composer install
+  "mkdir -p web/sites/default/files",
+  "chmod -R 777 web/sites/default",
+  "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
+  "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/files/",
+  "rm web/sites/default/files.tar.gz",
+  "ls -la web/sites/default/files",
+
+
+  "composer install --no-dev --optimize-autoloader"
 ]
 
 [phases.build]
+# Limpia cachés y prepara el entorno
 cmds = [
-  # Eliminar contenido previo
-  "rm -rf web/sites/default/files",
-
-  # Asegurarse de que la carpeta exista
-  "mkdir -p web/sites/default",
-
-  # Dar permisos
-  "chmod -R 777 web/sites/default/",
-
-  # Descargar y descomprimir el tar.gz
-  "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
-  "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
-  "rm web/sites/default/files.tar.gz",
-
-  
-  # Desbloquear plugins de Composer y permitir ejecución como root
-  #"export COMPOSER_ALLOW_SUPERUSER=1",
-  "export COMPOSER_ALLOW_PLUGIN=true",
-
-  # Instalar dependencias 
-  "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
-  
-  
-  # Ejecutar todos los comandos de Composer relacionados con Drupal
-  "COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",                     # reconstruye el core y archivos base
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload -o",                    # genera autoload optimizado
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer validate --no-check-publish",         # valida el archivo composer.json
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer info --name-only",                     # lista los módulos activos (debug útil)
-
-  # Verificar núcleo de Drupal
-  "ls -la web | grep core",
-  "ls web/modules/contrib",
-
-
-  # Reconstruir caché
-  "php vendor/bin/drush cr",
-  "php vendor/bin/drush cache:rebuild"
+  "mkdir -p web/sites/default/files",
+  "chmod -R 775 web/sites/default/files"
 ]
 
 [start]
-# Aquí es donde realmente migramos los archivos en cada despliegue
-cmd = "php -S 0.0.0.0:$PORT -t web"
+# Inicia el servidor PHP embebido
+# Puedes cambiar el puerto si Railway lo indica (usualmente $PORT)
+cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
+
+# =======================================
+# Variables recomendadas
+# =======================================
+# En Railway configura:
+# - DATABASE_URL = mysql://USER:PASSWORD@HOST:PORT/DATABASE?ssl-mode=REQUIRED
+# - DRUPAL_ENVIRONMENT = production
+# - PORT = 8080
