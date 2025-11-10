@@ -30,7 +30,8 @@ cmds = [
 
   # Instalar dependencias del proyecto
   "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
-  "ls -l web/core"
+  # Confirmar que core existe
+  "ls -l web/core | grep install.php || (echo '❌ Drupal core no encontrado' && exit 1)"
 ]
 
 # 🚀 Fase de ejecución (inicio del servidor PHP)
