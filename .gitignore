@@ -31,7 +31,7 @@
 /web/sites/*/files/
 /web/sites/*/private/
 # Ignorar cachés y directorios generados automáticamente
-/web/sites/*/files/config_*
+#/web/sites/*/files/config_*
 /web/sites/*/files/css/
 /web/sites/*/files/js/
 /web/sites/*/files-php/
