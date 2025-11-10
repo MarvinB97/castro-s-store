@@ -31,7 +31,11 @@ cmds = [
   # Instalar dependencias del proyecto
   "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
   # Confirmar que core existe
-  "ls -l web/core | grep install.php || (echo '❌ Drupal core no encontrado' && exit 1)"
+  "ls -l web/core | grep install.php || (echo '❌ Drupal core no encontrado' && exit 1)",
+
+  # Reconstruir caché
+  "php vendor/bin/drush cr",
+  "php vendor/bin/drush cache:rebuild"
 ]
 
 #  Fase de ejecución (inicio del servidor PHP)
