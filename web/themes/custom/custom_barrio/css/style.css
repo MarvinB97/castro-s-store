@@ -86,7 +86,7 @@ div#carouselExampleCaptions {
 .carousel-item{
   img.d-block{
     width: auto;
-    height: 30%;
+    height: 400px !important;
   }
 }
 
