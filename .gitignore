@@ -31,18 +31,14 @@
 /web/sites/*/files/
 /web/sites/*/private/
 # Ignorar cachés y directorios generados automáticamente
-#/web/sites/*/files/config_*
+/web/sites/*/files/config_*
 /web/sites/*/files/css/
 /web/sites/*/files/js/
 /web/sites/*/files-php/
 
 # =======================================
 # Configuración versionable (sí va a Git)
-#/web/sites/*/config/sync/
-
-#se debe subir la configuracion del sitio
-!/web/sites/default/files/config_gcbBuOgs0J35onJJQMwqnfuurmvexxGsCtk1pFzUnMQtAOYAu7RNXyv_3VnFKdZ8Pu_c5mRlKw/sync/
-
+/web/sites/*/config/sync/
 
 # =======================================
 # Archivos del sistema / temporales
