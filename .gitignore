@@ -9,11 +9,11 @@
 # =======================================
 # Composer / dependencias
 # =======================================
-/vendor/
-/web/core/
-/web/modules/contrib/
-/web/themes/contrib/
-/composer.lock
+#/vendor/
+#/web/core/
+#/web/modules/contrib/
+#/web/themes/contrib/
+#/composer.lock
 
 # =======================================
 # Archivos de configuración local y plantillas (no versionar)
@@ -38,7 +38,7 @@
 
 # =======================================
 # Configuración versionable (sí va a Git)
-/web/sites/*/config/sync/
+#/web/sites/*/config/sync/
 
 # =======================================
 # Archivos del sistema / temporales
