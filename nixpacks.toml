@@ -40,9 +40,22 @@ cmds = [
 ]
 
 #  Fase de ejecución (inicio del servidor PHP)
+#[start]
+#cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
 [start]
-cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
+cmd = """
+echo '⏳ Esperando conexión a la base de datos...';
+sleep 10;
 
+echo '✅ Importando configuración con drush cim -y...';
+vendor/bin/drush cim -y || true;
+
+echo '♻️ Limpiando caché...';
+vendor/bin/drush cr || true;
+
+echo '🚀 Iniciando servidor Drupal...';
+php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web
+"""
 
 # =======================================
 #  Mantener archivos generados del build
