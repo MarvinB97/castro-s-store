@@ -41,10 +41,10 @@ cmds = [
 ]
 
 #  Fase de ejecución (inicio del servidor PHP)
-#[start]
-#cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
 [start]
-cmd = "chmod +x ./scripts/start.sh"
+cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
+#[start]
+#cmd = "chmod +x ./scripts/start.sh"
 
 
 # =======================================
