@@ -1,95 +1,58 @@
-# =======================================
-# Nixpacks config for Drupal 10 (PHP 8.3)
-# Compatible con Railway, Render o Fly.io
-# =======================================
-
-#[build]
-#builder = "nixpacks/php"
-
-#  Dependencias del entorno
-#[phases.setup]
-#nixPkgs = ["php", "phpPackages.composer", "nginx", "nodejs_18", "libmysqlclient"]
-# nixpacks.toml
-#[build]
-#builder = "paketobuildpacks/builder:base"
-
-# Fase de instalación
 [phases.setup]
 nixPkgs = [
-  "php83",
-  "php83Extensions.curl",
-  "php83Extensions.mbstring",
-  "php83Extensions.pdo_mysql",
-  "php83Extensions.xml",
-  "php83Extensions.json",
-  "php83Extensions.opcache",
-  "php83Extensions.gd",
-  "php83Extensions.zip",
-  "nginx",
-  "bash",
-  "phpPackages.composer"
+  "php82",
+  "php82Packages.composer",   
+  "php82Extensions.pdo_mysql",
+  "php82Extensions.mbstring",
+  "php82Extensions.gd",
+  "php82Extensions.dom",
+  "php82Extensions.session",
+  "php82Extensions.simplexml",
+  "php82Extensions.filter",
+  "php82Extensions.bcmath" 
 ]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#  Fase de compilación — aquí va Composer
 [phases.build]
 cmds = [
-  # Mostrar versión (diagnóstico)
-  #"composer --version",
+  # Eliminar contenido previo
+  "rm -rf web/sites/default/files",
 
-  # Limpieza previa
-  #"rm -rf vendor web/core",
+  # Asegurarse de que la carpeta exista
+  #"mkdir -p web/sites/default",
 
+  # Dar permisos
+  "chmod -R 777 web/sites/default/",
 
-  # Crear carpeta y restaurar tus imágenes ANTES del composer install
-  "mkdir -p web/sites/default/files",
-  "chmod -R 777 web/sites/default",
+  # Descargar y descomprimir el tar.gz
   "curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz",
   "tar -xzf web/sites/default/files.tar.gz -C web/sites/default/",
   "rm web/sites/default/files.tar.gz",
-  "ls -la web/sites/default/files",
 
-  # Instalar dependencias del proyecto optimizado
+  
+  # Desbloquear plugins de Composer y permitir ejecución como root
+  #"export COMPOSER_ALLOW_SUPERUSER=1",
+  "export COMPOSER_ALLOW_PLUGIN=true",
+
+  # Instalar dependencias 
   "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
-  # Instalar dependencias del proyecto completo pero lento (cuando se hacen updates de drupal)
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer install",
-  # Confirmar que core existe
-  "ls -l web/core | grep install.php || (echo '❌ Drupal core no encontrado' && exit 1)",
+  
+  
+  # Ejecutar todos los comandos de Composer relacionados con Drupal
+  #"COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",                     # reconstruye el core y archivos base
+  #"COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload -o",                    # genera autoload optimizado
+  #"COMPOSER_ALLOW_SUPERUSER=1 composer validate --no-check-publish",         # valida el archivo composer.json
+  #"COMPOSER_ALLOW_SUPERUSER=1 composer info --name-only",                     # lista los módulos activos (debug útil)
+
+  # Verificar núcleo de Drupal
+  "ls -la web | grep core",
+  "ls web/modules/contrib",
+
 
   # Reconstruir caché
-  #"./vendor/bin/drush cim -y",
-  "./vendor/bin/drush cr"
+  "./vendor/bin/drush cr",
+  #"php vendor/bin/drush cache:rebuild"
 ]
 
-#  Fase de ejecución (inicio del servidor PHP)
 [start]
-cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
-#[start]
-#cmd = "chmod +x ./scripts/start.sh"
-
-
-# =======================================
-#  Mantener archivos generados del build
-# =======================================
-#[deploy]
-#include = [
-#  "vendor",
-#  "web/core",
-#  "web/modules",
-#  "web/themes",
-#  "web/profiles",
-#  "web/sites/default/files"
-#]
+# Aquí es donde realmente migramos los archivos en cada despliegue
+cmd = "php -S 0.0.0.0:$PORT -t web"
