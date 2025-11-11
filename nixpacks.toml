@@ -3,12 +3,12 @@
 # Compatible con Railway, Render o Fly.io
 # =======================================
 
-#[build]
+[build]
 builder = "nixpacks/php"
 
 #  Dependencias del entorno
-[phases.setup]
-nixPkgs = ["php", "phpPackages.composer", "nginx", "nodejs_18", "libmysqlclient"]
+#[phases.setup]
+#nixPkgs = ["php", "phpPackages.composer", "nginx", "nodejs_18", "libmysqlclient"]
 # nixpacks.toml
 #[build]
 #builder = "paketobuildpacks/builder:base"
