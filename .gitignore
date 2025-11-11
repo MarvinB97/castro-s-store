@@ -10,6 +10,11 @@
 # Composer / dependencias
 # =======================================
 #/vendor/
+
+#tests
+/web/core/tests/
+
+
 #/web/core/
 #/web/modules/contrib/
 #/web/themes/contrib/
