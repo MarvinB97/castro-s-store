@@ -49,7 +49,7 @@ cmds = [
 
 
   # Reconstruir caché
-  "./vendor/bin/drush cr",
+  "php ./vendor/bin/drush cr",
   #"php vendor/bin/drush cache:rebuild"
 ]
 
