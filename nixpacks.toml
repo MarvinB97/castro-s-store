@@ -3,8 +3,8 @@
 # Compatible con Railway, Render o Fly.io
 # =======================================
 
-[build]
-builder = "nixpacks/php"
+#[build]
+#builder = "nixpacks/php"
 
 #  Dependencias del entorno
 #[phases.setup]
