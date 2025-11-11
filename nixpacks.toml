@@ -3,21 +3,56 @@
 # Compatible con Railway, Render o Fly.io
 # =======================================
 
-[build]
-builder = "nixpacks/php"
+#[build]
+#builder = "nixpacks/php"
 
 #  Dependencias del entorno
+#[phases.setup]
+#nixPkgs = ["php", "phpPackages.composer", "nginx", "nodejs_18", "libmysqlclient"]
+# nixpacks.toml
+[build]
+builder = "paketobuildpacks/builder:base"
+
+# Fase de instalación
 [phases.setup]
-nixPkgs = ["php", "phpPackages.composer", "nginx", "nodejs_18", "libmysqlclient"]
+nixPkgs = [
+  "php83",
+  "php83Extensions.curl",
+  "php83Extensions.mbstring",
+  "php83Extensions.pdo_mysql",
+  "php83Extensions.xml",
+  "php83Extensions.json",
+  "php83Extensions.opcache",
+  "php83Extensions.gd",
+  "php83Extensions.zip",
+  "nginx",
+  "bash"
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #  Fase de compilación — aquí va Composer
 [phases.build]
 cmds = [
   # Mostrar versión (diagnóstico)
-  "composer --version",
+  #"composer --version",
 
   # Limpieza previa
-  "rm -rf vendor web/core",
+  #"rm -rf vendor web/core",
 
 
   # Crear carpeta y restaurar tus imágenes ANTES del composer install
@@ -31,7 +66,7 @@ cmds = [
   # Instalar dependencias del proyecto optimizado
   #"COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
   # Instalar dependencias del proyecto completo pero lento (cuando se hacen updates de drupal)
-  "COMPOSER_ALLOW_SUPERUSER=1 composer install",
+  #"COMPOSER_ALLOW_SUPERUSER=1 composer install",
   # Confirmar que core existe
   "ls -l web/core | grep install.php || (echo '❌ Drupal core no encontrado' && exit 1)",
 
@@ -50,12 +85,12 @@ cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
 # =======================================
 #  Mantener archivos generados del build
 # =======================================
-[deploy]
-include = [
-  "vendor",
-  "web/core",
-  "web/modules",
-  "web/themes",
-  "web/profiles",
-  "web/sites/default/files"
-]
+#[deploy]
+#include = [
+#  "vendor",
+#  "web/core",
+#  "web/modules",
+#  "web/themes",
+#  "web/profiles",
+#  "web/sites/default/files"
+#]
