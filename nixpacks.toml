@@ -4,14 +4,14 @@
 # =======================================
 
 #[build]
-#builder = "nixpacks/php"
+builder = "nixpacks/php"
 
 #  Dependencias del entorno
-#[phases.setup]
-#nixPkgs = ["php", "phpPackages.composer", "nginx", "nodejs_18", "libmysqlclient"]
+[phases.setup]
+nixPkgs = ["php", "phpPackages.composer", "nginx", "nodejs_18", "libmysqlclient"]
 # nixpacks.toml
-[build]
-builder = "paketobuildpacks/builder:base"
+#[build]
+#builder = "paketobuildpacks/builder:base"
 
 # Fase de instalación
 [phases.setup]
@@ -26,7 +26,8 @@ nixPkgs = [
   "php83Extensions.gd",
   "php83Extensions.zip",
   "nginx",
-  "bash"
+  "bash",
+  "phpPackages.composer"
 ]
 
 
@@ -62,7 +63,7 @@ cmds = [
   "ls -la web/sites/default/files",
 
   # Instalar dependencias del proyecto optimizado
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
+  "COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader",
   # Instalar dependencias del proyecto completo pero lento (cuando se hacen updates de drupal)
   #"COMPOSER_ALLOW_SUPERUSER=1 composer install",
   # Confirmar que core existe
@@ -70,7 +71,7 @@ cmds = [
 
   # Reconstruir caché
   #"./vendor/bin/drush cim -y",
-  #"./vendor/bin/drush cr"
+  "./vendor/bin/drush cr"
 ]
 
 #  Fase de ejecución (inicio del servidor PHP)
