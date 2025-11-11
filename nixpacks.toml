@@ -43,8 +43,6 @@ nixPkgs = [
 
 
 
-
-
 #  Fase de compilación — aquí va Composer
 [phases.build]
 cmds = [
