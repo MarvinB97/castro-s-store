@@ -36,14 +36,15 @@ cmds = [
   "ls -l web/core | grep install.php || (echo '❌ Drupal core no encontrado' && exit 1)",
 
   # Reconstruir caché
+  "./vendor/bin/drush cim -y",
   "./vendor/bin/drush cr"
 ]
 
 #  Fase de ejecución (inicio del servidor PHP)
-#[start]
-#cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
 [start]
-cmd = "chmod +x ./scripts/start.sh"
+cmd = "php -d memory_limit=512M -S 0.0.0.0:${PORT:-8080} -t web"
+#[start]
+#cmd = "chmod +x ./scripts/start.sh"
 
 
 # =======================================
