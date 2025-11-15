@@ -1,39 +1,63 @@
 # =======================================
-# DRUPAL + RAILWAY GITIGNORE
+# DDEV
 # =======================================
-
-# DDEV local
 .ddev/*
-#!.ddev/config.yaml
-#!.ddev/docker-compose.*.yaml
+.ddev/.web-build
+.ddev/.nfs
+.ddev/docker-compose.override.yaml
 
-# Ignorar dependencias generadas por Composer
+# =======================================
+# Composer / dependencias
+# =======================================
 #/vendor/
 
 #tests
 /web/core/tests/
 
-# Archivos de temas contribuidos (si instalas Bootstrap Barrio)
-#/web/themes/contrib/
+
+#/web/core/
 #/web/modules/contrib/
+#/web/themes/contrib/
+#/composer.lock
+
+# =======================================
+# Archivos de configuración local y plantillas (no versionar)
+# =======================================
+/web/sites/*/settings.local.php
+/web/sites/*/services.local.yml
+/web/sites/*/default.settings.php
+/web/sites/*/default.services.yml
+/web/sites/development.services.yml
+/web/sites/example.settings.local.php
+/web/sites/example.sites.php
+
+# =======================================
+# Archivos cargados por usuarios (subir solo a storage remoto)
+/web/sites/*/files/
+/web/sites/*/private/
+# Ignorar cachés y directorios generados automáticamente
+/web/sites/*/files/config_*
+/web/sites/*/files/css/
+/web/sites/*/files/js/
+/web/sites/*/files-php/
+
+# =======================================
+# Configuración versionable (sí va a Git)
+#/web/sites/*/config/sync/
+
+# =======================================
+# Archivos del sistema / temporales
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# =======================================
+# Opcional: archivos de Nixpacks, builds locales
+/.nixpacks/
 
 
-# Ignorar archivos de configuración local (solo usa settings.php en Railway si es genérico)
-#/web/sites/*/settings.local.php
-#/web/sites/*/services.local.yml
-
-# Ignorar archivos cargados por usuarios (no se deben versionar)
-#/web/sites/*/files/
-
-# Ignorar archivos temporales y cachés
-#/web/sites/*/files-php/
-#/web/sites/*/files/css/
-#/web/sites/*/files/js/
-#/web/core/assets
-#/web/core/.idea
-#/web/core/.vscode
-/.idea
-/.vscode
 
 # Ignorar backups y dumps de base de datos
 *.sql
@@ -45,11 +69,4 @@
 
 
 
-
-
-#/web/core/
-
-#/web/modules/contrib/
-#/web/profiles/contrib/
-#/web/themes/contrib/
-/web/sites/default/files/
+files.tar.gz

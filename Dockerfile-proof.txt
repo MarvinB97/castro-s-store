@@ -1,45 +1,43 @@
-# Imagen base de PHP 8.2 con Composer
-FROM php:8.2-apache
+# Etapa base con PHP 8.3 y extensiones necesarias
+FROM php:8.3-apache
 
-# Establecer directorio de trabajo
-WORKDIR /app
+# Variables de entorno equivalentes a tu railpack
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_ALLOW_PLUGIN=true \
+    FILES_TAR_URL="" \
+    PORT=8080
 
-# Copiar el contenido del proyecto
-COPY . /app
-
-# Instalar dependencias del sistema necesarias para Drupal
+# Instalar dependencias del sistema y extensiones PHP
 RUN apt-get update && apt-get install -y \
-    git unzip libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev libzip-dev && \
-    docker-php-ext-install pdo_mysql gd bcmath
-
-# Permitir que Composer ejecute plugins
-ENV COMPOSER_ALLOW_SUPERUSER=1
+    git unzip curl tar libpng-dev libjpeg-dev libfreetype6-dev libxml2-dev libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql bcmath gd dom session simplexml filter \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Instalar dependencias de Drupal
-RUN composer install --no-dev --optimize-autoloader
+# Copiar el proyecto
+WORKDIR /var/www/html
+COPY . .
 
-# Regenerar archivos del core (evita errores de /core/install.php not found)
-RUN composer drupal:scaffold
+# Construcción del proyecto (etapa de build del Railpack)
+RUN set -eux; \
+    rm -rf web/sites/default/files || true; \
+    mkdir -p web/sites/default; \
+    chmod -R 777 web/sites/default; \
+    if [ -n "$FILES_TAR_URL" ]; then \
+        curl -L "$FILES_TAR_URL" -o web/sites/default/files.tar.gz && \
+        tar -xzf web/sites/default/files.tar.gz -C web/sites/default/ && \
+        rm web/sites/default/files.tar.gz; \
+    fi; \
+    composer install --no-dev --optimize-autoloader; \
+    composer drupal:scaffold; \
+    ls -la web | grep core || true; \
+    ls web/modules/contrib || true; \
+    php vendor/bin/drush cr || php vendor/bin/drush cache:rebuild || true
 
-# Configurar permisos de sitios y archivos
-RUN mkdir -p web/sites/default && chmod -R 777 web/sites/default
-
-# Descargar los archivos (usando la misma variable que usas en Nixpacks)
-ARG FILES_TAR_URL
-RUN if [ -n "$FILES_TAR_URL" ]; then \
-      curl -L $FILES_TAR_URL -o web/sites/default/files.tar.gz && \
-      tar -xzf web/sites/default/files.tar.gz -C web/sites/default/ && \
-      rm web/sites/default/files.tar.gz; \
-    fi
-
-# Limpiar cache de Drupal (opcional)
-# RUN ./vendor/bin/drush --root=web cr || true
-
-# Exponer el puerto
+# Exponer el puerto configurado
 EXPOSE 8080
 
-# Comando de inicio (igual que Nixpacks)
+# Comando de inicio (etapa [start] del Railpack)
 CMD ["php", "-S", "0.0.0.0:8080", "-t", "web"]

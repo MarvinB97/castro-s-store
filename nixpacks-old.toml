@@ -18,7 +18,7 @@ cmds = [
   "rm -rf web/sites/default/files",
 
   # Asegurarse de que la carpeta exista
-  #"mkdir -p web/sites/default",
+  "mkdir -p web/sites/default",
 
   # Dar permisos
   "chmod -R 777 web/sites/default/",
@@ -38,7 +38,7 @@ cmds = [
   
   
   # Ejecutar todos los comandos de Composer relacionados con Drupal
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",                     # reconstruye el core y archivos base
+  "COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",                     # reconstruye el core y archivos base
   #"COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload -o",                    # genera autoload optimizado
   #"COMPOSER_ALLOW_SUPERUSER=1 composer validate --no-check-publish",         # valida el archivo composer.json
   #"COMPOSER_ALLOW_SUPERUSER=1 composer info --name-only",                     # lista los módulos activos (debug útil)
@@ -49,8 +49,8 @@ cmds = [
 
 
   # Reconstruir caché
-  "php ./vendor/bin/drush cr",
-  #"php vendor/bin/drush cache:rebuild"
+  "php vendor/bin/drush cr",
+  "php vendor/bin/drush cache:rebuild"
 ]
 
 [start]

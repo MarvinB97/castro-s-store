@@ -850,29 +850,24 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 
 
 
-
+$driver = "mysql";
 $databases['default']['default'] = [
-  'driver' => 'mysql',
-  'database' => getenv('DATABASE_NAME') ?: 'railway',
-  'username' => getenv('DATABASE_USER') ?: 'root',
-  'password' => getenv('DATABASE_PASSWORD') ?: '',
+  'database' => getenv('DATABASE_NAME'),
+  'username' => getenv('DATABASE_USER'),
+  'password' => getenv('DATABASE_PASSWORD'),
   'prefix' => '',
-  'host' => getenv('DATABASE_HOST') ?: '127.0.0.1',
-  'port' => getenv('DATABASE_PORT') ?: '3306',
+  'host' => getenv('DATABASE_HOST'),
+  'port' => getenv('DATABASE_PORT'),
+  'isolation_level' => 'READ COMMITTED',
+  'driver' => $driver,
   'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
   'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
-  'collation' => 'utf8mb4_general_ci',
-  'pdo' => [
-    \PDO::ATTR_TIMEOUT => 5,
-    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-  ],
 ];
 
 $settings['config_sync_directory'] = 'sites/default/files/config_gcbBuOgs0J35onJJQMwqnfuurmvexxGsCtk1pFzUnMQtAOYAu7RNXyv_3VnFKdZ8Pu_c5mRlKw/sync';
 
-/**
- * Optional: Load DDEV settings locally, ignore in production.
- */
-if (getenv('IS_DDEV_PROJECT') === 'true' && is_readable(__DIR__ . '/settings.ddev.php')) {
-  require __DIR__ . '/settings.ddev.php';
+// Automatically generated include for settings managed by ddev.
+$ddev_settings = __DIR__ . '/settings.ddev.php';
+if (getenv('IS_DDEV_PROJECT') == 'true' && is_readable($ddev_settings)) {
+  require $ddev_settings;
 }
