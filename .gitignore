@@ -6,61 +6,55 @@
 .ddev/.nfs
 .ddev/docker-compose.override.yaml
 
-
-# Ignorar dependencias generadas por Composer
+# =======================================
+# Composer
+# =======================================
 /vendor/
 
-#tests
+# =======================================
+# Drupal scaffold (NO ignorar default.settings.php, etc)
+# =======================================
 /web/core/tests/
 
-# Archivos de temas contribuidos (si instalas Bootstrap Barrio)
-/web/themes/contrib/
-/web/modules/contrib/
-
+# Contrib (instalados por composer)
+ /web/modules/contrib/
+ /web/themes/contrib/
 
 # =======================================
-# Archivos de configuración local y plantillas (no versionar)
+# Ignorar configuración local (sí debe ignorarse)
 # =======================================
 /web/sites/*/settings.local.php
 /web/sites/*/services.local.yml
-/web/sites/*/default.settings.php
-/web/sites/*/default.services.yml
 /web/sites/development.services.yml
-/web/sites/example.settings.local.php
-/web/sites/example.sites.php
-
-
 
 # =======================================
-# Archivos cargados por usuarios (subir solo a storage remoto)
+# Archivos SUBIDOS por usuarios
 /web/sites/*/files/
 /web/sites/*/private/
 
-# Ignorar archivos temporales y cachés
+# =======================================
+# Caché y temporales
 /web/sites/*/files-php/
 /web/sites/*/files/css/
 /web/sites/*/files/js/
-/web/core/assets
+.web/core/assets
 /web/core/.idea
 /web/core/.vscode
 /.idea
 /.vscode
 
-# Ignorar backups y dumps de base de datos
+# =======================================
+# Backups
 *.sql
 *.sqlite
 
-# Ignorar archivos de entorno locales
+# =======================================
+# Entorno
 .env
 .env.*
 
-
 # =======================================
-# Configuración versionable (sí va a Git)
-#/web/sites/*/config/sync/
-
-# =======================================
-# Archivos del sistema / temporales
+# Sistema
 *.log
 *.tmp
 *.swp
@@ -68,9 +62,7 @@
 Thumbs.db
 
 # =======================================
-# Opcional: archivos de Nixpacks, builds locales
+# Opcional
 /.nixpacks/
-
-
 
 files.tar.gz
