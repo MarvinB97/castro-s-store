@@ -1,0 +1,84 @@
+name: Drupal Deploy (Full Workflow)
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+
+  build:
+    name: Build & Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      # Obtener repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Validar estructura Composer (aunque vendor esté incluido)
+      - name: Validate Composer.json
+        uses: php-actions/composer@v6
+        with:
+          command: validate
+        continue-on-error: false
+
+      # Revisar sintaxis PHP (muy importante)
+      - name: PHP Syntax Check
+        run: |
+          find . -type f -name "*.php" -print0 | xargs -0 -n1 php -l
+
+      # Empaquetar build listo para deploy
+      - name: Create deployment package
+        run: |
+          tar -czf release.tar.gz ./
+
+      # Guardar artefacto
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: drupal-package
+          path: release.tar.gz
+
+
+  deploy:
+    name: Deploy to Server
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Descargar artefacto
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: drupal-package
+
+      # Extraer artefacto
+      - name: Extract package
+        run: tar -xzf release.tar.gz
+
+      # Sincronizar con el servidor (rsync)
+      - name: Deploy to Server via rsync
+        run: |
+          rsync -avz \
+            --exclude "web/sites/default/files" \
+            --exclude ".git" \
+            --delete \
+            ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.SERVER_PATH }}
+
+      # Limpiar caché
+      - name: Clear Drupal cache on server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          "cd ${ secrets.SERVER_PATH } && ./vendor/bin/drush cr"
+
+      # Reparar permisos
+      - name: Fix permissions
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          "chmod -R 755 web/sites/default && chmod -R 775 web/sites/default/files"
+
+      # Notificación
+      - name: Deployment complete
+        run: echo "Deployment successful!"
