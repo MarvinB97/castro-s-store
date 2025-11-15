@@ -6,19 +6,17 @@
 .ddev/.nfs
 .ddev/docker-compose.override.yaml
 
-# =======================================
-# Composer / dependencias
-# =======================================
-#/vendor/
+
+# Ignorar dependencias generadas por Composer
+/vendor/
 
 #tests
 /web/core/tests/
 
+# Archivos de temas contribuidos (si instalas Bootstrap Barrio)
+/web/themes/contrib/
+/web/modules/contrib/
 
-#/web/core/
-#/web/modules/contrib/
-#/web/themes/contrib/
-#/composer.lock
 
 # =======================================
 # Archivos de configuración local y plantillas (no versionar)
@@ -31,15 +29,31 @@
 /web/sites/example.settings.local.php
 /web/sites/example.sites.php
 
+
+
 # =======================================
 # Archivos cargados por usuarios (subir solo a storage remoto)
 /web/sites/*/files/
 /web/sites/*/private/
-# Ignorar cachés y directorios generados automáticamente
-/web/sites/*/files/config_*
+
+# Ignorar archivos temporales y cachés
+/web/sites/*/files-php/
 /web/sites/*/files/css/
 /web/sites/*/files/js/
-/web/sites/*/files-php/
+/web/core/assets
+/web/core/.idea
+/web/core/.vscode
+/.idea
+/.vscode
+
+# Ignorar backups y dumps de base de datos
+*.sql
+*.sqlite
+
+# Ignorar archivos de entorno locales
+.env
+.env.*
+
 
 # =======================================
 # Configuración versionable (sí va a Git)
@@ -56,16 +70,6 @@ Thumbs.db
 # =======================================
 # Opcional: archivos de Nixpacks, builds locales
 /.nixpacks/
-
-
-
-# Ignorar backups y dumps de base de datos
-*.sql
-*.sqlite
-
-# Ignorar archivos de entorno locales
-.env
-.env.*
 
 
 
