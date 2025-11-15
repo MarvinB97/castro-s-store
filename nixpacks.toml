@@ -30,7 +30,7 @@ cmds = [
 
   
   # Desbloquear plugins de Composer y permitir ejecución como root
-  #"export COMPOSER_ALLOW_SUPERUSER=1",
+  "export COMPOSER_ALLOW_SUPERUSER=1",
   "export COMPOSER_ALLOW_PLUGIN=true",
 
   # Instalar dependencias 
@@ -38,10 +38,10 @@ cmds = [
   
   
   # Ejecutar todos los comandos de Composer relacionados con Drupal
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",                     # reconstruye el core y archivos base
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload -o",                    # genera autoload optimizado
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer validate --no-check-publish",         # valida el archivo composer.json
-  #"COMPOSER_ALLOW_SUPERUSER=1 composer info --name-only",                     # lista los módulos activos (debug útil)
+  "COMPOSER_ALLOW_SUPERUSER=1 composer drupal:scaffold",                     # reconstruye el core y archivos base
+  "COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload -o",                    # genera autoload optimizado
+  "COMPOSER_ALLOW_SUPERUSER=1 composer validate --no-check-publish",         # valida el archivo composer.json
+  "COMPOSER_ALLOW_SUPERUSER=1 composer info --name-only",                     # lista los módulos activos (debug útil)
 
   # Verificar núcleo de Drupal
   "ls -la web | grep core",
