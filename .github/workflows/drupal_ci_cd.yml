@@ -148,18 +148,18 @@ jobs:
     - name: Install dependencies (no-dev for staging)
       run: composer install --prefer-dist --no-dev --optimize-autoloader --no-progress --no-interaction
 
-    - name: Setup SSH for remote deployment
-      uses: webfactory/ssh-agent@v0.8.0
-      with:
-        ssh-private-key: ${{ secrets.STAGING_SSH_KEY }}
+    # - name: Setup SSH for remote deployment
+    #   uses: webfactory/ssh-agent@v0.8.0
+    #   with:
+    #     ssh-private-key: ${{ secrets.STAGING_SSH_KEY }}
 
-    - name: Run database updates on staging
-      run: |
-        ssh ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} \
-          "cd ${{ secrets.STAGING_PATH }} && \
-          php -d memory_limit=256M /usr/local/bin/composer install --no-dev --optimize-autoloader && \
-          php -d memory_limit=256M vendor/bin/drush updb -y && \
-          php -d memory_limit=256M vendor/bin/drush cr"
+    # - name: Run database updates on staging
+    #   run: |
+    #     ssh ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} \
+    #       "cd ${{ secrets.STAGING_PATH }} && \
+    #       php -d memory_limit=256M /usr/local/bin/composer install --no-dev --optimize-autoloader && \
+    #       php -d memory_limit=256M vendor/bin/drush updb -y && \
+    #       php -d memory_limit=256M vendor/bin/drush cr"
 
   production-deploy:
     name: Production Deploy
