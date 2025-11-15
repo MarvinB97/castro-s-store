@@ -48,7 +48,17 @@ jobs:
 
     - name: Check PHP syntax
       run: |
-        find web/modules/custom web/themes/custom -name "*.php" -exec php -l {} \;
+        if [ -d "web/modules/custom" ]; then
+          find web/modules/custom -name "*.php" -exec php -l {} \;
+        else
+          echo "No custom modules found";
+        fi
+
+        if [ -d "web/themes/custom" ]; then
+          find web/themes/custom -name "*.php" -exec php -l {} \;
+        else
+          echo "No custom themes found";
+        fi
 
     - name: Run PHPCS on custom code (if exists)
       run: |
