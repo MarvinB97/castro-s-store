@@ -7,28 +7,28 @@
 .ddev/docker-compose.override.yaml
 
 # =======================================
-# Composer
+# Composer (se vuelven a generar en deploy)
 # =======================================
 /vendor/
 
 # =======================================
-# Drupal scaffold (NO ignorar default.settings.php, etc)
+# Drupal scaffold
 # =======================================
 /web/core/tests/
 
 # Contrib (instalados por composer)
- /web/modules/contrib/
- /web/themes/contrib/
+/web/modules/contrib/
+/web/themes/contrib/
 
 # =======================================
-# Ignorar configuración local (sí debe ignorarse)
+# Ignorar configuración local
 # =======================================
 /web/sites/*/settings.local.php
 /web/sites/*/services.local.yml
 /web/sites/development.services.yml
 
 # =======================================
-# Archivos SUBIDOS por usuarios
+# Archivos subidos por usuarios
 /web/sites/*/files/
 /web/sites/*/private/
 
@@ -37,11 +37,11 @@
 /web/sites/*/files-php/
 /web/sites/*/files/css/
 /web/sites/*/files/js/
-.web/core/assets
-/web/core/.idea
-/web/core/.vscode
-/.idea
-/.vscode
+web/core/assets
+web/core/.idea
+web/core/.vscode
+.idea
+.vscode
 
 # =======================================
 # Backups
