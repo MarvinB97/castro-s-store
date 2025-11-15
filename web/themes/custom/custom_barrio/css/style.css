@@ -6,7 +6,7 @@
  span.field.field--name-title.field--type-string.field--label-hidden{
     color: rgb(0, 68, 255);
  }
-
+ 
  .field__label{
    color: green;
  }
@@ -85,7 +85,8 @@ div#carouselExampleCaptions {
 
 .carousel-item{
   img.d-block{
-    height: 30vw;
+    width: auto;
+    height: 400px !important;
   }
 }
 
