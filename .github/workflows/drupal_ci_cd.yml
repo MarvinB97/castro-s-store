@@ -120,13 +120,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
-
     - name: Check for frontend dependencies
       run: |
         if [ -f "package.json" ]; then
@@ -187,34 +180,34 @@ jobs:
     - name: Install dependencies (production)
       run: composer install --prefer-dist --no-dev --optimize-autoloader --no-progress --no-interaction
 
-    - name: Setup SSH for production
-      uses: webfactory/ssh-agent@v0.8.0
-      with:
-        ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
+    # - name: Setup SSH for production
+    #   uses: webfactory/ssh-agent@v0.8.0
+    #   with:
+    #     ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
 
-    - name: Deploy to production via RSYNC
-      run: |
-        rsync -avz --delete \
-          --exclude='.git' \
-          --exclude='.github' \
-          --exclude='.env' \
-          --exclude='web/sites/*/files' \
-          --exclude='web/sites/*/settings.local.php' \
-          --exclude='vendor/' \
-          --exclude='node_modules/' \
-          ./ ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }}:${{ secrets.PRODUCTION_PATH }}/
+    # - name: Deploy to production via RSYNC
+    #   run: |
+    #     rsync -avz --delete \
+    #       --exclude='.git' \
+    #       --exclude='.github' \
+    #       --exclude='.env' \
+    #       --exclude='web/sites/*/files' \
+    #       --exclude='web/sites/*/settings.local.php' \
+    #       --exclude='vendor/' \
+    #       --exclude='node_modules/' \
+    #       ./ ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }}:${{ secrets.PRODUCTION_PATH }}/
 
-    - name: Run production updates
-      run: |
-        ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} \
-          "cd ${{ secrets.PRODUCTION_PATH }} && \
-          php -d memory_limit=256M vendor/bin/drush updb -y && \
-          php -d memory_limit=256M vendor/bin/drush cim -y && \
-          php -d memory_limit=256M vendor/bin/drush cr"
+    # - name: Run production updates
+    #   run: |
+    #     ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} \
+    #       "cd ${{ secrets.PRODUCTION_PATH }} && \
+    #       php -d memory_limit=256M vendor/bin/drush updb -y && \
+    #       php -d memory_limit=256M vendor/bin/drush cim -y && \
+    #       php -d memory_limit=256M vendor/bin/drush cr"
 
-    - name: Notify deployment success
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        channel: '#deployments'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+    # - name: Notify deployment success
+    #   uses: 8398a7/action-slack@v3
+    #   with:
+    #     status: ${{ job.status }}
+    #     channel: '#deployments'
+    #     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
