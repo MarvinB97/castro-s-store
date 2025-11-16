@@ -1,0 +1,43 @@
+# Etapa base con PHP 8.3 y extensiones necesarias
+FROM php:8.3-apache
+
+# Variables de entorno equivalentes a tu railpack
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_ALLOW_PLUGIN=true \
+    FILES_TAR_URL="" \
+    PORT=8080
+
+# Instalar dependencias del sistema y extensiones PHP
+RUN apt-get update && apt-get install -y \
+    git unzip curl tar libpng-dev libjpeg-dev libfreetype6-dev libxml2-dev libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql bcmath gd dom session simplexml filter \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Instalar Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copiar el proyecto
+WORKDIR /var/www/html
+COPY . .
+
+# Construcción del proyecto (etapa de build del Railpack)
+RUN set -eux; \
+    rm -rf web/sites/default/files || true; \
+    mkdir -p web/sites/default; \
+    chmod -R 777 web/sites/default; \
+    if [ -n "$FILES_TAR_URL" ]; then \
+        curl -L "$FILES_TAR_URL" -o web/sites/default/files.tar.gz && \
+        tar -xzf web/sites/default/files.tar.gz -C web/sites/default/ && \
+        rm web/sites/default/files.tar.gz; \
+    fi; \
+    composer install --no-dev --optimize-autoloader; \
+    composer drupal:scaffold; \
+    ls -la web | grep core || true; \
+    ls web/modules/contrib || true; \
+    php vendor/bin/drush cr || php vendor/bin/drush cache:rebuild || true
+
+# Exponer el puerto configurado
+EXPOSE 8080
+
+# Comando de inicio (etapa [start] del Railpack)
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "web"]

@@ -1,0 +1,3 @@
+# drush.yml
+options:
+  root: web

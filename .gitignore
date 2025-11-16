@@ -1,44 +1,68 @@
 # =======================================
-# DRUPAL + RAILWAY GITIGNORE
+# DDEV
 # =======================================
-
-# DDEV local
 .ddev/*
-#!.ddev/config.yaml
-#!.ddev/docker-compose.*.yaml
+.ddev/.web-build
+.ddev/.nfs
+.ddev/docker-compose.override.yaml
 
-# Ignorar dependencias generadas por Composer
+# =======================================
+# Composer (se vuelven a generar en deploy)
+# =======================================
 /vendor/
 
-#tests
+# =======================================
+# Drupal scaffold
+# =======================================
 /web/core/tests/
 
-# Archivos de temas contribuidos (si instalas Bootstrap Barrio)
-/web/themes/contrib/
+# Contrib (instalados por composer)
 /web/modules/contrib/
+/web/themes/contrib/
 
-
-# Ignorar archivos de configuración local (solo usa settings.php en Railway si es genérico)
+# =======================================
+# Ignorar configuración local
+# =======================================
 /web/sites/*/settings.local.php
 /web/sites/*/services.local.yml
+/web/sites/development.services.yml
 
-# Ignorar archivos cargados por usuarios (no se deben versionar)
+# =======================================
+# Archivos subidos por usuarios
 /web/sites/*/files/
+/web/sites/*/private/
 
-# Ignorar archivos temporales y cachés
+# =======================================
+# Caché y temporales
 /web/sites/*/files-php/
 /web/sites/*/files/css/
 /web/sites/*/files/js/
-/web/core/assets
-/web/core/.idea
-/web/core/.vscode
-/.idea
-/.vscode
+#web/core/assets
+web/core/.idea
+web/core/.vscode
+.idea
+.vscode
 
-# Ignorar backups y dumps de base de datos
+# =======================================
+# Backups
 *.sql
 *.sqlite
 
-# Ignorar archivos de entorno locales
+# =======================================
+# Entorno
 .env
 .env.*
+
+# =======================================
+# Sistema
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# =======================================
+# Opcional
+/.nixpacks/
+
+files.tar.gz

@@ -4,5 +4,178 @@
  */
 
  span.field.field--name-title.field--type-string.field--label-hidden{
-    color: red;
+    color: rgb(0, 68, 255);
  }
+ 
+ .field__label{
+   color: green;
+ }
+
+ .btn-primary {
+    background-color: #8a8a8a !important;
+    border-color: #6d6d6d !important;
+}
+
+
+
+
+
+/*
+*ZONA DE ENCABEZADO
+*/
+
+.highlighted{
+  margin: 0.5em;
+
+  aside.container.section.clearfix {
+    display: flex;
+
+    div#block-custom-barrio-search-form-wide{
+        margin-left: 45%;
+    }
+  }
+}
+
+
+
+
+
+
+/*
+*Search
+*/
+.block-search-form-block{
+  .content.container-inline {
+      display: flex;
+      margin: 0 auto;
+  }
+}
+
+
+/*carrito de compras*/
+
+
+span.cart-block--summary__count {
+    color: #000;
+}
+span.cart-block--summary__count::before {
+    content: "\f07a";
+    font-family: "FontAwesome";
+    color: #000;
+}
+
+
+
+/*
+*login
+*/
+.menu--account {
+  margin-left: auto;
+  li a{
+    color:rgba(69, 69, 69, 1);
+    text-decoration: underline;
+  }
+}
+
+/*Carousel*/
+
+div#carouselExampleCaptions {
+  background: radial-gradient(circle, rgba(69, 69, 69, 1) 30%, rgba(255, 255, 255, 1) 100%);
+}
+
+.carousel-item{
+  img.d-block{
+    width: auto;
+    height: 400px !important;
+  }
+}
+
+.content .field__item hr {
+    margin: 2rem 0;
+    color: inherit;
+    border: 0;
+    border-top: 3px solid;
+    opacity: 1;
+}
+
+
+
+
+ /*
+ *NAV BAR
+ */
+nav#navbar-main {
+    background: #454545;
+    background: radial-gradient(circle, rgba(69, 69, 69, 1) 45%, rgba(255, 255, 255, 1) 100%);
+}
+
+a.navbar-brand {
+    color: #ffff !important;
+    font-family: serif;
+    font-size: 48px;
+    margin: 0 auto;
+}
+
+div#sidebar_first {
+    width: 20%;
+}
+
+
+
+
+
+/*Categories*/
+
+.field--type-image img, .field--name-field-user-picture img {
+    margin: 0 0 1em;
+    width: 40%;
+    height: auto;
+}
+
+
+
+
+/*
+*WHATSAPP BTN
+*/
+
+#block-custom-barrio-boton-whatsapp {
+  a{
+    float: right;
+    border-radius: 60px;
+    padding: 12px;
+    margin-bottom: 2em;
+  }
+  a::before {
+    content: "\f095";
+    font-family: 'FontAwesome';
+    font-size: 30px;
+    border: 1px solid #fff;
+    border-radius: 100%;
+    padding: 10px;
+  }
+}
+
+
+
+/*
+*PRODUCTOS DISEÑO CARDS
+*/
+
+article.contextual-region {
+    border: 1px solid #9a9a9a;
+    border-radius: 20px;
+    padding: 20px;
+    height: max-content;
+    margin: 2px 5px;
+}
+
+
+
+/*
+*FOOTER
+*/
+
+section.row.region.region-footer-first {
+    display: contents;
+}
